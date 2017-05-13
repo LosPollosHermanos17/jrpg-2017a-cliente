@@ -3,6 +3,7 @@
 	<name>cliente</name>
 	<comment></comment>
 	<projects>
+		<project>jrpg-2017a-dominio</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -19,6 +20,7 @@
 			<name>Server</name>
 			<type>2</type>
 			<location>/home/lucas/software/eclipse/C::/Users/leodr/Desktop/jrpg/servidor/src</location>
+			<location>C:/home/lucas/software/eclipse/C::/Users/leodr/Desktop/jrpg/servidor/src</location>
 		</link>
 	</linkedResources>
 </projectDescription>
