@@ -261,21 +261,8 @@ public class EstadoBatalla extends Estado {
 		try {
 			juego.getCliente().getSalida().writeObject(gson.toJson(paqueteFinalizarBatalla));
 			
-			paquetePersonaje.setSaludTope(personaje.getSaludTope());
-			paquetePersonaje.setEnergiaTope(personaje.getEnergiaTope());
-			paquetePersonaje.setNivel(personaje.getNivel());
-			paquetePersonaje.setExperiencia(personaje.getExperiencia());
-			paquetePersonaje.setDestreza(personaje.getDestreza());
-			paquetePersonaje.setFuerza(personaje.getFuerza());
-			paquetePersonaje.setInteligencia(personaje.getInteligencia());
-			
-			paqueteEnemigo.setSaludTope(enemigo.getSaludTope());
-			paqueteEnemigo.setEnergiaTope(enemigo.getEnergiaTope());
-			paqueteEnemigo.setNivel(enemigo.getNivel());
-			paqueteEnemigo.setExperiencia(enemigo.getExperiencia());
-			paqueteEnemigo.setDestreza(enemigo.getDestreza());
-			paqueteEnemigo.setFuerza(enemigo.getFuerza());
-			paqueteEnemigo.setInteligencia(enemigo.getInteligencia());
+			paquetePersonaje.actualizar(personaje);
+			paqueteEnemigo.actualizar(enemigo);
 			
 			paquetePersonaje.setComando(Comando.ACTUALIZARPERSONAJE);
 			paqueteEnemigo.setComando(Comando.ACTUALIZARPERSONAJE);
@@ -283,7 +270,7 @@ public class EstadoBatalla extends Estado {
 			juego.getCliente().getSalida().writeObject(gson.toJson(paquetePersonaje));
 			juego.getCliente().getSalida().writeObject(gson.toJson(paqueteEnemigo));
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Fallo la conexi�n con el servidor.");
+			JOptionPane.showMessageDialog(null, "Fallo la conexión con el servidor.");
 			e.printStackTrace();
 		}
 	}

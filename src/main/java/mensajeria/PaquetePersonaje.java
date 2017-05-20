@@ -2,6 +2,7 @@ package mensajeria;
 
 import java.io.Serializable;
 
+import dominio.Personaje;
 import estados.Estado;
 
 public class PaquetePersonaje extends Paquete implements Serializable, Cloneable {
@@ -22,6 +23,17 @@ public class PaquetePersonaje extends Paquete implements Serializable, Cloneable
 
 	public PaquetePersonaje() {
 		estado = Estado.estadoOffline;
+	}
+	
+	public void actualizar(Personaje personaje)
+	{
+		this.saludTope = personaje.getSaludTope();
+		this.energiaTope = personaje.getEnergiaTope();
+		this.nivel = personaje.getNivel();
+		this.experiencia = personaje.getExperiencia();
+		this.destreza = personaje.getDestreza();
+		this.fuerza = personaje.getFuerza();
+		this.inteligencia = personaje.getInteligencia();
 	}
 
 	public int getEstado() {
