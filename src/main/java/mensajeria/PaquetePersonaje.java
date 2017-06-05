@@ -20,6 +20,8 @@ public class PaquetePersonaje extends Paquete implements Serializable, Cloneable
 	private int inteligencia;
 	private int nivel;
 	private int experiencia;
+	private PaqueteInventario inventario;
+	private PaqueteMochila mochila;
 
 	public PaquetePersonaje() {
 		estado = Estado.estadoOffline;
@@ -34,6 +36,22 @@ public class PaquetePersonaje extends Paquete implements Serializable, Cloneable
 		this.destreza = personaje.getDestreza();
 		this.fuerza = personaje.getFuerza();
 		this.inteligencia = personaje.getInteligencia();
+	}
+
+	public PaqueteInventario getInventario() {
+		return inventario;
+	}
+
+	public void setInventario(PaqueteInventario inventario) {
+		this.inventario = inventario;
+	}
+
+	public PaqueteMochila getMochila() {
+		return mochila;
+	}
+
+	public void setMochila(PaqueteMochila mochila) {
+		this.mochila = mochila;
 	}
 
 	public int getEstado() {
