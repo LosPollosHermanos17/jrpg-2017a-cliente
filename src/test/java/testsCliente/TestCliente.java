@@ -1,8 +1,13 @@
 package testsCliente;
 
 import java.io.IOException;
-
-import javax.swing.JTextArea;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -17,20 +22,68 @@ import mensajeria.PaquetePersonaje;
 import mensajeria.PaqueteUsuario;
 
 public class TestCliente {
+	private Thread t;
+	private ServerSocket ss;
+	private Gson gson = new Gson();
 
 	/// Para realizar los test es necesario iniciar el servidor
+	public void server(final Queue<Paquete> paquetes) {
+		t = new Thread(new Runnable() {
+			public void run() {
+
+				try {
+					System.out.println("Creando Servidor");
+					ss = new ServerSocket(9999);
+					System.out.println("Servidor Creado.");
+					System.out.println("Esperando clientes...");
+					Socket client = ss.accept();
+					System.out.println("Cliente conectado.");
+					System.out.println("Salida...");
+					ObjectOutputStream salida = new ObjectOutputStream(client.getOutputStream());
+					System.out.println("Salida.");
+					System.out.println("Entrada...");
+					ObjectInputStream entrada = new ObjectInputStream(client.getInputStream());
+					System.out.println("Entrada.");
+
+					while (!paquetes.isEmpty()) {
+						System.out.println("Paquetes: " + paquetes.size());
+						entrada.readObject();
+						Paquete paquete = paquetes.poll();
+						if (paquete.getMensaje() != "0")
+							paquete.setMensaje("1");
+						salida.writeObject(gson.toJson(paquete));
+						System.out.println("Escrito");
+					}
+					System.out.println("Cerrando cliente...");
+					client.close();
+					System.out.println("Cliente cerrado.");
+
+				} catch (IOException | ClassNotFoundException e) {
+					e.printStackTrace();
+
+				} finally {
+					try {
+						System.out.println("Cerrando servidor...");
+						ss.close();
+						System.out.println("Servidor cerrado");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		t.start();
+	}
 
 	@Test
 	public void testConexionConElServidor() {
-		Gson gson = new Gson();
+		Queue<Paquete> cola = new LinkedList<Paquete>();
+		cola.add(new Paquete());
+		this.server(cola);
 
 		Cliente cliente = new Cliente();
-
-		// Pasado este punto la conexi�n entre el cliente y el servidor resulto exitosa
 		Assert.assertEquals(1, 1);
-
 		try {
-
 			// Cierro las conexiones
 			Paquete p = new Paquete();
 			p.setComando(Comando.DESCONECTAR);
@@ -43,18 +96,25 @@ public class TestCliente {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		t.stop();
 	}
 
 	@Test
 	public void testRegistro() {
-		Gson gson = new Gson();
 
 		// Registro el usuario
 		PaqueteUsuario pu = new PaqueteUsuario();
 		pu.setComando(Comando.REGISTRO);
 		pu.setUsername("nuevoUser");
 		pu.setPassword("test");
+		pu.setMensaje("1");
 
+		Queue<Paquete> cola = new LinkedList<Paquete>();
+		cola.add(pu);
+		cola.add(pu);
+		this.server(cola);
+
+		// Inicio el Thread
 		Cliente cliente = new Cliente();
 
 		try {
@@ -73,23 +133,28 @@ public class TestCliente {
 			cliente.getSalida().close();
 			cliente.getEntrada().close();
 			cliente.getSocket().close();
-
 			Assert.assertEquals(Paquete.msjExito, resultado.getMensaje());
 
 		} catch (JsonSyntaxException | ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 		}
+		t.stop();
 	}
 
 	@Test
 	public void testRegistroFallido() {
-		Gson gson = new Gson();
 
 		// Registro el usuario
 		PaqueteUsuario pu = new PaqueteUsuario();
 		pu.setComando(Comando.REGISTRO);
 		pu.setUsername("nuevoUser");
-		pu.setPassword("test");
+		pu.setPassword("test32");
+		pu.setMensaje("0");
+
+		Queue<Paquete> cola = new LinkedList<Paquete>();
+		cola.add(pu);
+		cola.add(pu);
+		this.server(cola);
 
 		Cliente cliente = new Cliente();
 
@@ -97,7 +162,6 @@ public class TestCliente {
 
 			// Envio el paquete para registrarme
 			cliente.getSalida().writeObject(gson.toJson(pu));
-
 			// Recibo la respuesta del servidor
 			Paquete resultado = (Paquete) gson.fromJson((String) cliente.getEntrada().readObject(), Paquete.class);
 
@@ -109,19 +173,16 @@ public class TestCliente {
 			cliente.getSalida().close();
 			cliente.getEntrada().close();
 			cliente.getSocket().close();
-
 			Assert.assertEquals(Paquete.msjFracaso, resultado.getMensaje());
 
 		} catch (JsonSyntaxException | ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 		}
+		t.stop();
 	}
 
 	@Test
-	public void testRegistrarPersonaje() {
-		Gson gson = new Gson();
-
-		Cliente cliente = new Cliente();
+	public void testRegistrarPersonaje() {// cuelga
 
 		// Registro de usuario
 		PaqueteUsuario pu = new PaqueteUsuario();
@@ -143,18 +204,25 @@ public class TestCliente {
 		pp.setRaza("Asesino");
 		pp.setSaludTope(1);
 
+		Queue<Paquete> cola = new LinkedList<Paquete>();
+		cola.add(pu);
+		cola.add(pp);
+		cola.add(pp);
+		this.server(cola);
+
+		Cliente cliente = new Cliente();
 		try {
 
 			// Envio el paquete de registro de usuario
 			cliente.getSalida().writeObject(gson.toJson(pu));
 
 			// Recibo la respuesta del servidor
-			Paquete paquete = (Paquete) gson.fromJson((String) cliente.getEntrada().readObject(), Paquete.class);
+			Paquete paqueteAux = (Paquete) gson.fromJson((String) cliente.getEntrada().readObject(), Paquete.class);
 
 			// Envio el paquete de registro de personaje
 			cliente.getSalida().writeObject(gson.toJson(pp));
-
 			// Recibo el personaje de mi usuario
+
 			pp = (PaquetePersonaje) gson.fromJson((String) cliente.getEntrada().readObject(), PaquetePersonaje.class);
 
 			// Cierro las conexiones
@@ -170,11 +238,19 @@ public class TestCliente {
 		} catch (IOException | JsonSyntaxException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+		t.stop();
 	}
 
 	@Test
 	public void testIniciarSesion() {
-		Gson gson = new Gson();
+
+		PaquetePersonaje paquete = new PaquetePersonaje();
+		paquete.setNombre("PjTest");
+		Queue<Paquete> cola = new LinkedList<Paquete>();
+		cola.add(paquete);
+		cola.add(paquete);
+		this.server(cola);
+
 		Cliente cliente = new Cliente();
 
 		PaqueteUsuario pu = new PaqueteUsuario();
@@ -183,7 +259,6 @@ public class TestCliente {
 		pu.setPassword("test");
 
 		try {
-
 			// Envio el paquete de incio de sesion
 			cliente.getSalida().writeObject(gson.toJson(pu));
 
@@ -199,17 +274,15 @@ public class TestCliente {
 			cliente.getSalida().close();
 			cliente.getEntrada().close();
 			cliente.getSocket().close();
-
 			Assert.assertEquals("PjTest", paquetePersonaje.getNombre());
 		} catch (IOException | JsonSyntaxException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+		t.stop();
 	}
 
 	@Test
 	public void testActualizarPersonaje() {
-		Gson gson = new Gson();
-		Cliente cliente = new Cliente();
 
 		PaquetePersonaje pp = new PaquetePersonaje();
 		pp.setComando(Comando.ACTUALIZARPERSONAJE);
@@ -224,6 +297,12 @@ public class TestCliente {
 		pp.setRaza("Asesino");
 		pp.setSaludTope(10000);
 
+		Queue<Paquete> cola = new LinkedList<Paquete>();
+		cola.add(pp);
+		cola.add(pp);
+		this.server(cola);
+
+		Cliente cliente = new Cliente();
 		try {
 
 			// Envio el paquete de actualizacion de personaje
@@ -241,10 +320,10 @@ public class TestCliente {
 			cliente.getSalida().close();
 			cliente.getEntrada().close();
 			cliente.getSocket().close();
-
 			Assert.assertEquals(10000, paquetePersonaje.getSaludTope());
 		} catch (IOException | JsonSyntaxException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+		t.stop();
 	}
 }
