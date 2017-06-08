@@ -1,7 +1,9 @@
 language: java
+
 jdk:
   - oraclejdk7
   - openjdk7
+
 notifications:
   email:
     recipients:
@@ -13,5 +15,6 @@ notifications:
       - matias.n.lell@gmail.com
     on_success: always
     on_failure: always
+
 before_install:
   - wget -P $TRAVIS_BUILD_DIR/ http://www.mixturabags.com.ar/juego/jrpg-2017a-dominio.jar
