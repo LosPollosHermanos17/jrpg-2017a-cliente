@@ -2,8 +2,9 @@ package mensajeria;
 
 import java.io.Serializable;
 public class PaqueteItem extends Paquete implements Serializable, Cloneable {
-
+	
 	private int id;
+	private String nombre;
 	private int bonoAtaque;
 	private int bonoDefensa;
 	private int bonoMagia;
@@ -20,6 +21,14 @@ public class PaqueteItem extends Paquete implements Serializable, Cloneable {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
 	}
 
 	public int getBonoAtaque() {
