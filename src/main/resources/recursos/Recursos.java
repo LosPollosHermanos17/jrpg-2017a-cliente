@@ -65,6 +65,8 @@ public class Recursos {
 	public static BufferedImage greenTree;
 	public static BufferedImage nievePiso1;
 	public static BufferedImage iceBlock;
+	public static BufferedImage botonInventario;
+	
 	// Fin Entorno
 
 	// Batalla
@@ -332,6 +334,8 @@ public class Recursos {
 		nievePiso1 = CargadorImagen.cargarImagen("/nieve piso.png");
 		actualizarBarraDeCarga(++elementosCargados, menuCarga);
 		iceBlock = CargadorImagen.cargarImagen("/nieve cubo.png");
+		
+		botonInventario = CargadorImagen.cargarImagen("/BotonInventario.png");
 		
 		
 		// Mapa

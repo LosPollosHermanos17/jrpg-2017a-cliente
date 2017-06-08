@@ -17,6 +17,7 @@ import com.google.gson.Gson;
 import entidades.Entidad;
 import interfaz.EstadoDePersonaje;
 import interfaz.MenuInfoPersonaje;
+import interfaz.MenuInventario;
 import juego.Juego;
 import juego.Pantalla;
 import mensajeria.Comando;
@@ -33,11 +34,11 @@ public class EstadoJuego extends Estado {
 	private Map<Integer, PaqueteMovimiento> ubicacionPersonajes;
 	private Map<Integer, PaquetePersonaje> personajesConectados;
 	private boolean haySolicitud;
-	private int tipoSolicitud;
-	
-	private final Gson gson = new Gson();
-	
-	private BufferedImage miniaturaPersonaje;
+	private int tipoSolicitud;	
+	private final Gson gson = new Gson();	
+	private BufferedImage miniaturaPersonaje;	
+	private MenuInventario menuInventario;
+	private int[] posMouse;
 	
 	MenuInfoPersonaje menuEnemigo;
 
@@ -47,6 +48,7 @@ public class EstadoJuego extends Estado {
 		paquetePersonaje = juego.getPersonaje();
 		entidadPersonaje = new Entidad(juego, mundo, 64, 64, juego.getPersonaje().getNombre(), 0, 0, Recursos.personaje.get(juego.getPersonaje().getRaza()), 150);
 		miniaturaPersonaje = Recursos.personaje.get(paquetePersonaje.getRaza()).get(5)[0];
+		menuInventario = new MenuInventario(juego.getPantalla().getFrame(), paquetePersonaje.getInventario());
 
 		try {
 			// Le envio al servidor que me conecte al mapa y mi posicion
@@ -55,7 +57,7 @@ public class EstadoJuego extends Estado {
 			juego.getCliente().getSalida().writeObject(gson.toJson(juego.getPersonaje(), PaquetePersonaje.class));
 			juego.getCliente().getSalida().writeObject(gson.toJson(juego.getUbicacionPersonaje(), PaqueteMovimiento.class));
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Fallo la conexión con el servidor al ingresar al mundo.");
+			JOptionPane.showMessageDialog(null, "Fallo la conexiï¿½n con el servidor al ingresar al mundo.");
 			e.printStackTrace();
 		}
 	}
@@ -64,18 +66,29 @@ public class EstadoJuego extends Estado {
 	public void actualizar() {
 		mundo.actualizar();
 		entidadPersonaje.actualizar();
+		
+		// Obtengo los clicks realizados dentro del juego.
+		// El objetivo es determinar si se hizo un click en el boton "Inventario".
+		if (juego.getHandlerMouse().getNuevoClick()) {
+			posMouse = juego.getHandlerMouse().getPosMouse();
+			
+			if (menuInventario.botonClickeado(posMouse[0], posMouse[1]))
+				menuInventario.mostrarInventario();
+			
+			juego.getHandlerMouse().setNuevoClick(false);
+		}
+
 	}
 
 	@Override
 	public void graficar(Graphics g) {
-		g.drawImage(Recursos.background, 0, 0, juego.getAncho(), juego.getAlto(), null);
+		g.drawImage(Recursos.background, 0, 0, juego.getAncho(), juego.getAlto(), null);		
 		mundo.graficar(g);
-		//entidadPersonaje.graficar(g);
 		graficarPersonajes(g);
 		mundo.graficarObstaculos(g);
-		entidadPersonaje.graficarNombre(g);
-		g.drawImage(Recursos.marco, 0, 0, juego.getAncho(), juego.getAlto(), null);
+		entidadPersonaje.graficarNombre(g);				
 		EstadoDePersonaje.dibujarEstadoDePersonaje(g, 5, 5, paquetePersonaje, miniaturaPersonaje);
+		menuInventario.graficarBoton(g);
 		if(haySolicitud)
 			menuEnemigo.graficar(g, tipoSolicitud);
 			
