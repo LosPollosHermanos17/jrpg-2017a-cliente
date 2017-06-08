@@ -27,7 +27,7 @@ public class TestCliente {
 	private Gson gson = new Gson();
 
 	/// Para realizar los test es necesario iniciar el servidor
-	public void server(Queue<Paquete> paquetes) {
+	public void server(final Queue<Paquete> paquetes) {
 		t = new Thread(new Runnable() {
 			public void run() {
 
