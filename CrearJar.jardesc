@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jardesc>
+    <jar path="jrpg-2017a-cliente/jrpg-2017a-cliente.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/jrpg-2017a-cliente/CrearJar.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=jrpg-2017a-cliente/src\/test\/resources"/>
+        <javaElement handleIdentifier="=jrpg-2017a-cliente/src\/test\/java"/>
+        <file path="/jrpg-2017a-cliente/LICENSE.txt"/>
+        <file path="/jrpg-2017a-cliente/config.txt"/>
+        <javaElement handleIdentifier="=jrpg-2017a-cliente/src\/main\/java"/>
+        <file path="/jrpg-2017a-cliente/.travis.yml"/>
+        <file path="/jrpg-2017a-cliente/.gitignore"/>
+        <file path="/jrpg-2017a-cliente/README.md"/>
+        <javaElement handleIdentifier="=jrpg-2017a-cliente/src\/main\/resources"/>
+        <file path="/jrpg-2017a-cliente/.project"/>
+        <javaElement handleIdentifier="=jrpg-2017a-cliente/recursos"/>
+        <file path="/jrpg-2017a-cliente/build.gradle"/>
+        <folder path="/jrpg-2017a-cliente/src"/>
+        <file path="/jrpg-2017a-cliente/.classpath"/>
+        <file path="/jrpg-2017a-cliente/humans.md"/>
+    </selectedElements>
+</jardesc>
