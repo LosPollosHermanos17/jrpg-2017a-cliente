@@ -5,6 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,94 +23,67 @@ import mensajeria.PaqueteUsuario;
 
 public class TestCliente {
 	private Thread t;
+	private ServerSocket ss;
+	private Gson gson = new Gson();
 
-	public void server(Paquete paquete) {
-		t = new Thread(new Runnable() {
-			public void run() {
-
-				try {
-					// Creas el server
-					ServerSocket ss = new ServerSocket(9999);
-					// Esperas a que el cliente se conecte
-					Socket client = ss.accept();
-					// El cliente se conecto y obtengo el stream de salida
-					ObjectOutputStream salida = new ObjectOutputStream(client.getOutputStream());
-					// Convierto el objeto a un string en json
-					Gson gson = new Gson();
-					if(paquete.getMensaje()!="0")
-						paquete.setMensaje("1");
-					String json = gson.toJson(paquete);
-					// Envio el objeto en formato json
-					salida.writeObject(json);
-
-					// Esperas a que el cliente se Desconecte
-					client = ss.accept();
-
-					// Cierro el socket del cliente
-					client.close();
-					// Cierro el socket del server
-					ss.close();
-
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
-		t.start();
-	}
-
-	public void server(Paquete paquete, Paquete paquete2) {
-		t = new Thread(new Runnable() {
-			public void run() {
-
-				try {
-					// Creas el server
-					ServerSocket ss = new ServerSocket(9999);
-					// Esperas a que el cliente se conecte
-					Socket client = ss.accept();
-					// El cliente se conecto y obtengo el stream de salida
-					ObjectOutputStream salida = new ObjectOutputStream(client.getOutputStream());
-					// Convierto el objeto a un string en json
-					Gson gson = new Gson();
-					paquete.setMensaje("1");
-					String json = gson.toJson(paquete);
-					// Envio el objeto en formato json
-					salida.writeObject(json);
-
-					// Esperas a que el cliente se Desconecte
-					
-					json = gson.toJson(paquete2);
-					// Envio el objeto en formato json
-					salida.writeObject(json);
-					client=ss.accept();
-					// Cierro el socket del cliente
-					client.close();
-					// Cierro el socket del server
-					ss.close();
-
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
-		t.start();
-	}
 	/// Para realizar los test es necesario iniciar el servidor
+	public void server(Queue<Paquete> paquetes) {
+		t = new Thread(new Runnable() {
+			public void run() {
+
+				try {
+					System.out.println("Creando Servidor");
+					ss = new ServerSocket(9999);
+					System.out.println("Servidor Creado.");
+					System.out.println("Esperando clientes...");
+					Socket client = ss.accept();
+					System.out.println("Cliente conectado.");
+					System.out.println("Salida...");
+					ObjectOutputStream salida = new ObjectOutputStream(client.getOutputStream());
+					System.out.println("Salida.");
+					System.out.println("Entrada...");
+					ObjectInputStream entrada = new ObjectInputStream(client.getInputStream());
+					System.out.println("Entrada.");
+
+					while (!paquetes.isEmpty()) {
+						System.out.println("Paquetes: " + paquetes.size());
+						entrada.readObject();
+						Paquete paquete = paquetes.poll();
+						if (paquete.getMensaje() != "0")
+							paquete.setMensaje("1");
+						salida.writeObject(gson.toJson(paquete));
+						System.out.println("Escrito");
+					}
+					System.out.println("Cerrando cliente...");
+					client.close();
+					System.out.println("Cliente cerrado.");
+
+				} catch (IOException | ClassNotFoundException e) {
+					e.printStackTrace();
+
+				} finally {
+					try {
+						System.out.println("Cerrando servidor...");
+						ss.close();
+						System.out.println("Servidor cerrado");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		t.start();
+	}
 
 	@Test
 	public void testConexionConElServidor() {
-		Gson gson = new Gson();
-		Paquete paquete = new Paquete();
-		server(paquete);
+		Queue<Paquete> cola = new LinkedList<Paquete>();
+		cola.add(new Paquete());
+		this.server(cola);
 
 		Cliente cliente = new Cliente();
-
 		Assert.assertEquals(1, 1);
-
 		try {
-
 			// Cierro las conexiones
 			Paquete p = new Paquete();
 			p.setComando(Comando.DESCONECTAR);
@@ -125,15 +101,18 @@ public class TestCliente {
 
 	@Test
 	public void testRegistro() {
-		Gson gson = new Gson();
 
 		// Registro el usuario
 		PaqueteUsuario pu = new PaqueteUsuario();
 		pu.setComando(Comando.REGISTRO);
 		pu.setUsername("nuevoUser");
 		pu.setPassword("test");
-		// pu.setMensaje("1");
-		server(pu);
+		pu.setMensaje("1");
+
+		Queue<Paquete> cola = new LinkedList<Paquete>();
+		cola.add(pu);
+		cola.add(pu);
+		this.server(cola);
 
 		// Inicio el Thread
 		Cliente cliente = new Cliente();
@@ -164,7 +143,6 @@ public class TestCliente {
 
 	@Test
 	public void testRegistroFallido() {
-		Gson gson = new Gson();
 
 		// Registro el usuario
 		PaqueteUsuario pu = new PaqueteUsuario();
@@ -173,7 +151,11 @@ public class TestCliente {
 		pu.setPassword("test32");
 		pu.setMensaje("0");
 
-		server(pu);
+		Queue<Paquete> cola = new LinkedList<Paquete>();
+		cola.add(pu);
+		cola.add(pu);
+		this.server(cola);
+
 		Cliente cliente = new Cliente();
 
 		try {
@@ -201,13 +183,13 @@ public class TestCliente {
 
 	@Test
 	public void testRegistrarPersonaje() {// cuelga
-		Gson gson = new Gson();
-		
+
 		// Registro de usuario
 		PaqueteUsuario pu = new PaqueteUsuario();
 		pu.setComando(Comando.REGISTRO);
 		pu.setUsername("nuevoUser");
 		pu.setPassword("test");
+
 		// Registro de personaje
 		PaquetePersonaje pp = new PaquetePersonaje();
 		pp.setComando(Comando.CREACIONPJ);
@@ -221,8 +203,13 @@ public class TestCliente {
 		pp.setNombre("PjTest");
 		pp.setRaza("Asesino");
 		pp.setSaludTope(1);
-		
-		server(pu,pp);
+
+		Queue<Paquete> cola = new LinkedList<Paquete>();
+		cola.add(pu);
+		cola.add(pp);
+		cola.add(pp);
+		this.server(cola);
+
 		Cliente cliente = new Cliente();
 		try {
 
@@ -259,7 +246,11 @@ public class TestCliente {
 
 		PaquetePersonaje paquete = new PaquetePersonaje();
 		paquete.setNombre("PjTest");
-		server(paquete);
+		Queue<Paquete> cola = new LinkedList<Paquete>();
+		cola.add(paquete);
+		cola.add(paquete);
+		this.server(cola);
+
 		Cliente cliente = new Cliente();
 
 		PaqueteUsuario pu = new PaqueteUsuario();
@@ -268,7 +259,6 @@ public class TestCliente {
 		pu.setPassword("test");
 
 		try {
-			Gson gson = new Gson();
 			// Envio el paquete de incio de sesion
 			cliente.getSalida().writeObject(gson.toJson(pu));
 
@@ -293,7 +283,6 @@ public class TestCliente {
 
 	@Test
 	public void testActualizarPersonaje() {
-		Gson gson = new Gson();
 
 		PaquetePersonaje pp = new PaquetePersonaje();
 		pp.setComando(Comando.ACTUALIZARPERSONAJE);
@@ -308,7 +297,11 @@ public class TestCliente {
 		pp.setRaza("Asesino");
 		pp.setSaludTope(10000);
 
-		server(pp);
+		Queue<Paquete> cola = new LinkedList<Paquete>();
+		cola.add(pp);
+		cola.add(pp);
+		this.server(cola);
+
 		Cliente cliente = new Cliente();
 		try {
 
