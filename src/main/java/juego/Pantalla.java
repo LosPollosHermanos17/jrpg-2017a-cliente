@@ -52,7 +52,7 @@ public class Pantalla {
 					cliente.getSocket().close();
 					System.exit(0);
 				} catch (IOException e) {
-					JOptionPane.showMessageDialog(null, "Fallo al intentar cerrar la aplicación.");
+					JOptionPane.showMessageDialog(null, "Fallo al intentar cerrar la aplicaciï¿½n.");
 					System.exit(1);
 					e.printStackTrace();
 				}
@@ -67,8 +67,8 @@ public class Pantalla {
 		canvas.setMaximumSize(new Dimension(ANCHO, ALTO));
 		canvas.setMinimumSize(new Dimension(ANCHO, ALTO));
 		canvas.setFocusable(false);
-
-		pantalla.add(canvas);
+				
+		pantalla.add(canvas);		
 		pantalla.pack();
 	}
 

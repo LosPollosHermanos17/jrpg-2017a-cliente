@@ -20,6 +20,7 @@ public class Juego implements Runnable {
 	private Pantalla pantalla;
 	private final String NOMBRE;
 	private final int ANCHO;
+
 	private final int ALTO;
 
 	private Thread hilo;
@@ -108,7 +109,7 @@ public class Juego implements Runnable {
 
 		// Fin de graficado de imagenes
 
-		bs.show(); // Hace visible el próximo buffer disponible
+		bs.show(); // Hace visible el prï¿½ximo buffer disponible
 		g.dispose();
 	}
 
@@ -221,4 +222,10 @@ public class Juego implements Runnable {
 	public void actualizarPersonaje() {
 		paquetePersonaje = (PaquetePersonaje) (escuchaMensajes.getPersonajesConectados().get(paquetePersonaje.getId()).clone());
 	}
+
+	public Pantalla getPantalla() {
+		return pantalla;
+	}
+	
+	
 }
