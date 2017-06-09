@@ -66,6 +66,7 @@ public class Recursos {
 	public static BufferedImage nievePiso1;
 	public static BufferedImage iceBlock;
 	public static BufferedImage botonInventario;
+	public static BufferedImage espadaPlata;
 	
 	// Fin Entorno
 
@@ -336,6 +337,7 @@ public class Recursos {
 		iceBlock = CargadorImagen.cargarImagen("/nieve cubo.png");
 		
 		botonInventario = CargadorImagen.cargarImagen("/BotonInventario.png");
+		espadaPlata = CargadorImagen.cargarImagen("/Espada de plata.png");
 		
 		
 		// Mapa
