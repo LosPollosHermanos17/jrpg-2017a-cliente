@@ -29,7 +29,7 @@ public class PaqueteItem extends Paquete implements Serializable, Cloneable {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+
 	public int getTipo() {
 		return tipo;
 	}
@@ -37,7 +37,7 @@ public class PaqueteItem extends Paquete implements Serializable, Cloneable {
 	public String getNombre() {
 		return nombre;
 	}
-	
+
 	public void setTipo(int tipo) {
 		this.tipo = tipo;
 	}
@@ -111,7 +111,7 @@ public class PaqueteItem extends Paquete implements Serializable, Cloneable {
 	}
 
 	public Item getItem() {
-		return new Item(this.getId(), this.getNombre(), this.getBonoAtaque(), this.getBonoDefensa(),
+		return new Item(this.getId(), this.getTipo(), this.getNombre(), this.getBonoAtaque(), this.getBonoDefensa(),
 				this.getBonoMagia(), this.getBonoSalud(), this.getBonoEnergia(), this.getFuerzaRequerida(),
 				this.getDestrezaRequerida(), this.getInteligenciaRequerida());
 	}
