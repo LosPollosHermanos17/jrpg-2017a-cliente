@@ -15,6 +15,7 @@ import dominio.Elfo;
 import dominio.Guerrero;
 import dominio.Hechicero;
 import dominio.Humano;
+import dominio.Inventario;
 import dominio.Orco;
 import dominio.Personaje;
 import interfaz.EstadoDePersonaje;
@@ -25,6 +26,7 @@ import mensajeria.Comando;
 import mensajeria.PaqueteAtacar;
 import mensajeria.PaqueteBatalla;
 import mensajeria.PaqueteFinalizarBatalla;
+import mensajeria.PaqueteInventario;
 import mensajeria.PaquetePersonaje;
 import mundo.Mundo;
 import recursos.Recursos;
@@ -144,6 +146,10 @@ public class EstadoBatalla extends Estado {
 
 				if (haySpellSeleccionada && seRealizoAccion) {
 					if (!enemigo.estaVivo()) {
+						
+						// Volver a cero el personaje.
+						personaje.
+						
 						juego.getEstadoJuego().setHaySolicitud(true, juego.getPersonaje(), MenuInfoPersonaje.menuGanarBatalla);
 						if(personaje.ganarExperiencia(enemigo.getNivel() * 40)){
 							juego.getPersonaje().setNivel(personaje.getNivel());
@@ -188,12 +194,12 @@ public class EstadoBatalla extends Estado {
 	
 	private void crearPersonajes() {
 		String nombre = paquetePersonaje.getNombre();
-		int salud = paquetePersonaje.getSaludTope();
-		int energia = paquetePersonaje.getEnergiaTope();
-		int fuerza = paquetePersonaje.getFuerza();
-		int destreza = paquetePersonaje.getDestreza();
-		int inteligencia = paquetePersonaje.getInteligencia();
-		int experiencia = paquetePersonaje.getExperiencia();
+		int salud = paquetePersonaje.getSaludTope() + 100;
+		int energia = paquetePersonaje.getEnergiaTope() + 100;
+		int fuerza = paquetePersonaje.getFuerza() + 100;
+		int destreza = paquetePersonaje.getDestreza() + 100;
+		int inteligencia = paquetePersonaje.getInteligencia() + 100;
+		int experiencia = paquetePersonaje.getExperiencia() + 100;
 		int nivel = paquetePersonaje.getNivel();
 		int id = paquetePersonaje.getId();
 
@@ -204,17 +210,19 @@ public class EstadoBatalla extends Estado {
 			casta = new Hechicero();
 		} else if (paquetePersonaje.getCasta().equals("Asesino")) {
 			casta = new Asesino();
-		}
+		}		
 
+		Inventario inventario = paquetePersonaje.getPaqueteInventario().getInventario();
+				
 		if (paquetePersonaje.getRaza().equals("Humano")) {
 			personaje = new Humano(nombre, salud, energia, fuerza, destreza, inteligencia, casta, 
-				experiencia, nivel, id);
+				experiencia, nivel, id, inventario);
 		} else if (paquetePersonaje.getRaza().equals("Orco")) {
 			personaje = new Orco(nombre, salud, energia, fuerza, destreza, inteligencia, casta, 
-					experiencia, nivel, id);
+					experiencia, nivel, id, inventario);
 		} else if (paquetePersonaje.getRaza().equals("Elfo")) {
 			personaje = new Elfo(nombre, salud, energia, fuerza, destreza, inteligencia, casta,
-					experiencia, nivel, id);
+					experiencia, nivel, id, inventario);
 		}
 
 		nombre = paqueteEnemigo.getNombre();
@@ -236,15 +244,17 @@ public class EstadoBatalla extends Estado {
 			casta = new Asesino();
 		}
 
+		inventario = paqueteEnemigo.getPaqueteInventario().getInventario();
+		
 		if (paqueteEnemigo.getRaza().equals("Humano")) {
 			enemigo = new Humano(nombre, salud, energia, fuerza, destreza, inteligencia, casta,
-					experiencia, nivel, id);
+					experiencia, nivel, id, inventario);
 		} else if (paqueteEnemigo.getRaza().equals("Orco")) {
 			enemigo = new Orco(nombre, salud, energia, fuerza, destreza, inteligencia, casta,
-					experiencia, nivel, id);
+					experiencia, nivel, id, inventario);
 		} else if (paqueteEnemigo.getRaza().equals("Elfo")) {
 			enemigo = new Elfo(nombre, salud, energia, fuerza, destreza, inteligencia, casta,
-					experiencia, nivel, id);
+					experiencia, nivel, id, inventario);
 		}
 	}
 
@@ -260,6 +270,7 @@ public class EstadoBatalla extends Estado {
 	private void finalizarBatalla() {
 		try {
 			juego.getCliente().getSalida().writeObject(gson.toJson(paqueteFinalizarBatalla));
+			
 			
 			paquetePersonaje.actualizar(personaje);
 			paqueteEnemigo.actualizar(enemigo);
