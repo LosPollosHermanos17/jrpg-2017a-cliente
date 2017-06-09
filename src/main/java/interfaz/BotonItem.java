@@ -20,7 +20,6 @@ import recursos.Recursos;
 public class BotonItem extends JButton {
 
 	private Item item;
-	private HashMap<Integer, BufferedImage> tipoImagenes;
 	private JPopupMenu popup;
 	private boolean posicionItem;
 
@@ -29,13 +28,6 @@ public class BotonItem extends JButton {
 		this.item = item;
 		this.actualizarItem(item);
 		this.inicializarPopup(ventanaJuego);
-
-		this.tipoImagenes = new HashMap<Integer, BufferedImage>();
-		this.tipoImagenes.put(1, Recursos.espadaPlata);
-		this.tipoImagenes.put(2, Recursos.espadaPlata);
-		this.tipoImagenes.put(3, Recursos.espadaPlata);
-		this.tipoImagenes.put(4, Recursos.espadaPlata);
-		this.tipoImagenes.put(5, Recursos.espadaPlata);
 	}
 
 	private void inicializarPopup(JFrame ventanaJuego) {
@@ -66,7 +58,7 @@ public class BotonItem extends JButton {
 	public void actualizarItem(Item item) {
 		this.item = item;
 		if (item != null) {
-			this.setIcon(new ImageIcon(this.tipoImagenes.get(item.getTipo())));
+			this.setIcon(new ImageIcon(Recursos.items.get(item.getNombre())));
 			this.setEnabled(true);
 			this.setToolTipText(item.getNombre());
 		} else {

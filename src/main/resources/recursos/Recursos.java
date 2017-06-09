@@ -80,6 +80,7 @@ public class Recursos {
 	public static BufferedImage menuBatallaDeshabilitado;
 	
 	public static Map<String, BufferedImage> habilidades = new HashMap<>();
+	public static Map<String, BufferedImage> items = new HashMap<>();
 	// Fin Batalla
 	
 
@@ -336,8 +337,28 @@ public class Recursos {
 		actualizarBarraDeCarga(++elementosCargados, menuCarga);
 		iceBlock = CargadorImagen.cargarImagen("/nieve cubo.png");
 		
+		//Inventario
 		botonInventario = CargadorImagen.cargarImagen("/BotonInventario.png");
-		espadaPlata = CargadorImagen.cargarImagen("/Espada de plata.png");
+		items.put("Espada de Bronce", CargadorImagen.cargarImagen("/Espada de plata.png"));
+		items.put("Espada de Plata", CargadorImagen.cargarImagen("/Espada de plata.png"));
+		items.put("Espada de Oro", CargadorImagen.cargarImagen("/Espada de plata.png"));
+		items.put("Escudo de Bronce", CargadorImagen.cargarImagen("/Espada de plata.png"));
+		items.put("Escudo de Plata", CargadorImagen.cargarImagen("/Espada de plata.png"));
+		items.put("Escudo de Oro", CargadorImagen.cargarImagen("/Espada de plata.png"));
+		items.put("Botas de Bronce", CargadorImagen.cargarImagen("/Espada de plata.png"));
+		items.put("Botas de Plata", CargadorImagen.cargarImagen("/Espada de plata.png"));
+		items.put("Botas de Oro", CargadorImagen.cargarImagen("/Espada de plata.png"));
+		items.put("Casco de Bronce", CargadorImagen.cargarImagen("/Espada de plata.png"));
+		items.put("Casco de Plata", CargadorImagen.cargarImagen("/Espada de plata.png"));
+		items.put("Casco de Oro", CargadorImagen.cargarImagen("/Espada de plata.png"));
+		items.put("Armadura de Bronce", CargadorImagen.cargarImagen("/Espada de plata.png"));
+		items.put("Armadura de Plata", CargadorImagen.cargarImagen("/Espada de plata.png"));
+		items.put("Armadura de Oro", CargadorImagen.cargarImagen("/Espada de plata.png"));
+		items.put("Piedra Mágica", CargadorImagen.cargarImagen("/Espada de plata.png"));
+		items.put("Piedra de la Vida", CargadorImagen.cargarImagen("/Espada de plata.png"));
+		items.put("Energizante", CargadorImagen.cargarImagen("/Espada de plata.png"));
+
+		
 		
 		
 		// Mapa

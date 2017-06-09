@@ -6,9 +6,9 @@ import dominio.Item;
 
 public class PaqueteItem extends Paquete implements Serializable, Cloneable {
 
-	private int id;
-	private int tipo;
+	private int id;	
 	private String nombre;
+	private String tipo;
 	private int bonoAtaque;
 	private int bonoDefensa;
 	private int bonoMagia;
@@ -29,16 +29,16 @@ public class PaqueteItem extends Paquete implements Serializable, Cloneable {
 	public void setId(int id) {
 		this.id = id;
 	}
-
-	public int getTipo() {
-		return tipo;
-	}
-
+	
 	public String getNombre() {
 		return nombre;
 	}
+	
+	public String getTipo() {
+		return tipo;
+	}
 
-	public void setTipo(int tipo) {
+	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
 

@@ -52,7 +52,7 @@ public class MenuInventario {
 	private JPanel panelInventario;
 	private Inventario inventario;
 
-	private HashMap<Integer, Integer> itemTipoPosicion;
+	private HashMap<String, Integer> itemTipoPosicion;
 	private HashMap<Integer, BotonItem> itemPosicionBoton;
 
 	public MenuInventario(JFrame v, Inventario i) {
@@ -62,13 +62,13 @@ public class MenuInventario {
 		this.panelInventario = new JPanel(new GridLayout(CANT_FILAS, CANT_COLUMNAS));
 
 		this.itemPosicionBoton = new HashMap<Integer, BotonItem>();
-		this.itemTipoPosicion = new HashMap<Integer, Integer>();
+		this.itemTipoPosicion = new HashMap<String, Integer>();
 
-		this.itemTipoPosicion.put(1, POS_GRILLA_MANOS1);
-		this.itemTipoPosicion.put(2, POS_GRILLA_PIES);
-		this.itemTipoPosicion.put(3, POS_GRILLA_CABEZA);
-		this.itemTipoPosicion.put(4, POS_GRILLA_PECHO);
-		this.itemTipoPosicion.put(5, POS_GRILLA_ACCESORIO);
+		this.itemTipoPosicion.put("Manos", POS_GRILLA_MANOS1);
+		this.itemTipoPosicion.put("Pies", POS_GRILLA_PIES);
+		this.itemTipoPosicion.put("Cabeza", POS_GRILLA_CABEZA);
+		this.itemTipoPosicion.put("Pecho", POS_GRILLA_PECHO);
+		this.itemTipoPosicion.put("Accesorio", POS_GRILLA_ACCESORIO);
 
 		inicializarInventario();
 		inicializarVentana();
@@ -116,7 +116,6 @@ public class MenuInventario {
 	public void actualizarInventario() {
 		for (Item item : inventario.getItems().values()) {
 			if (this.itemTipoPosicion.containsKey(item.getTipo())) {
-
 				int posicion = this.itemTipoPosicion.get(item.getTipo());
 				BotonItem boton = this.itemPosicionBoton.get(posicion);
 				boton.actualizarItem(item);
