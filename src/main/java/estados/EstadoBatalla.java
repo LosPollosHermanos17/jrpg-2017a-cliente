@@ -145,10 +145,7 @@ public class EstadoBatalla extends Estado {
 
 
 				if (haySpellSeleccionada && seRealizoAccion) {
-					if (!enemigo.estaVivo()) {
-						
-						// Volver a cero el personaje.
-						personaje.
+					if (!enemigo.estaVivo()) {	
 						
 						juego.getEstadoJuego().setHaySolicitud(true, juego.getPersonaje(), MenuInfoPersonaje.menuGanarBatalla);
 						if(personaje.ganarExperiencia(enemigo.getNivel() * 40)){
@@ -194,12 +191,12 @@ public class EstadoBatalla extends Estado {
 	
 	private void crearPersonajes() {
 		String nombre = paquetePersonaje.getNombre();
-		int salud = paquetePersonaje.getSaludTope() + 100;
-		int energia = paquetePersonaje.getEnergiaTope() + 100;
-		int fuerza = paquetePersonaje.getFuerza() + 100;
-		int destreza = paquetePersonaje.getDestreza() + 100;
-		int inteligencia = paquetePersonaje.getInteligencia() + 100;
-		int experiencia = paquetePersonaje.getExperiencia() + 100;
+		int salud = paquetePersonaje.getSaludTope();
+		int energia = paquetePersonaje.getEnergiaTope();
+		int fuerza = paquetePersonaje.getFuerza();
+		int destreza = paquetePersonaje.getDestreza();
+		int inteligencia = paquetePersonaje.getInteligencia() ;
+		int experiencia = paquetePersonaje.getExperiencia();
 		int nivel = paquetePersonaje.getNivel();
 		int id = paquetePersonaje.getId();
 
@@ -270,8 +267,7 @@ public class EstadoBatalla extends Estado {
 	private void finalizarBatalla() {
 		try {
 			juego.getCliente().getSalida().writeObject(gson.toJson(paqueteFinalizarBatalla));
-			
-			
+						
 			paquetePersonaje.actualizar(personaje);
 			paqueteEnemigo.actualizar(enemigo);
 			

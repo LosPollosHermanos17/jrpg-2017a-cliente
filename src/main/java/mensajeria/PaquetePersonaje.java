@@ -128,7 +128,10 @@ public class PaquetePersonaje extends Paquete implements Serializable, Cloneable
 	public int getSaludTope() {
 		return saludTope;
 	}
-
+	
+	public int getSaludTopeConBonus() {
+		return saludTope + inventario.getBonusSalud();
+	}
 
 	public void setSaludTope(int saludTope) {
 		this.saludTope = saludTope;
@@ -137,6 +140,11 @@ public class PaquetePersonaje extends Paquete implements Serializable, Cloneable
 
 	public int getEnergiaTope() {
 		return energiaTope;
+	}
+	
+	public int getEnergiaTopeConBonus()
+	{
+		return energiaTope + inventario.getBonusEnergia();
 	}
 
 

@@ -77,7 +77,6 @@ public class EstadoJuego extends Estado {
 			
 			juego.getHandlerMouse().setNuevoClick(false);
 		}
-
 	}
 
 	@Override
