@@ -22,6 +22,16 @@ public class PaqueteInventario extends Paquete implements Serializable, Cloneabl
 	public Map<Integer, PaqueteItem> getItems() {
 		return items;
 	}
+	
+	public int getBonusSalud()
+	{
+		return this.getInventario().getBonusSalud();
+	}
+	
+	public int getBonusEnergia()
+	{
+		return this.getInventario().getBonusEnergia();
+	}
 
 	public Inventario getInventario() {
 		Inventario inventario = new Inventario();
