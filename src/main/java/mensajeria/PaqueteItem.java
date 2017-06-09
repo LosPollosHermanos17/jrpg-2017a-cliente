@@ -1,8 +1,11 @@
 package mensajeria;
 
 import java.io.Serializable;
+
+import dominio.Item;
+
 public class PaqueteItem extends Paquete implements Serializable, Cloneable {
-	
+
 	private int id;
 	private String nombre;
 	private int bonoAtaque;
@@ -10,11 +13,14 @@ public class PaqueteItem extends Paquete implements Serializable, Cloneable {
 	private int bonoMagia;
 	private int bonoSalud;
 	private int bonoEnergia;
-	
+
 	private int fuerzaRequerida;
 	private int destrezaRequerida;
 	private int inteligenciaRequerida;
-	
+
+	public PaqueteItem() {
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -95,6 +101,9 @@ public class PaqueteItem extends Paquete implements Serializable, Cloneable {
 		this.inteligenciaRequerida = inteligenciaRequerida;
 	}
 
-	public PaqueteItem() {		
+	public Item getItem() {
+		return new Item(this.getId(), this.getNombre(), this.getBonoAtaque(), this.getBonoDefensa(),
+				this.getBonoMagia(), this.getBonoSalud(), this.getBonoEnergia(), this.getFuerzaRequerida(),
+				this.getDestrezaRequerida(), this.getInteligenciaRequerida());
 	}
 }
