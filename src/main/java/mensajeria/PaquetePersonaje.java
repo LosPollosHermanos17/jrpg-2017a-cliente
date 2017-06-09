@@ -177,7 +177,6 @@ public class PaquetePersonaje extends Paquete implements Serializable, Cloneable
 		return inteligencia;
 	}
 
-
 	public void setInteligencia(int inteligencia) {
 		this.inteligencia = inteligencia;
 	}

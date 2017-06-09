@@ -1,6 +1,7 @@
 package mensajeria;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 public class PaqueteAtacar extends Paquete implements Serializable, Cloneable {
 
@@ -11,6 +12,9 @@ public class PaqueteAtacar extends Paquete implements Serializable, Cloneable {
 	private int nuevaSaludEnemigo;
 	private int nuevaEnergiaEnemigo;
 	
+	private HashMap<String, Integer> atributosPersonaje = new HashMap<String, Integer>();
+	private HashMap<String, Integer> atributosEnemigo = new HashMap<String, Integer>();
+	
 	public PaqueteAtacar(int id, int idEnemigo, int nuevaSalud, int nuevaEnergia, int nuevaSaludEnemigo, int nuevaEnergiaEnemigo) {
 		setComando(Comando.ATACAR);
 		this.id = id;
@@ -19,6 +23,11 @@ public class PaqueteAtacar extends Paquete implements Serializable, Cloneable {
 		this.nuevaEnergiaPersonaje = nuevaEnergia;
 		this.nuevaSaludEnemigo = nuevaSaludEnemigo;
 		this.nuevaEnergiaEnemigo = nuevaEnergiaEnemigo;
+		
+		atributosPersonaje.put("salud", nuevaSalud);
+		atributosPersonaje.put("energia", nuevaEnergia);
+		atributosEnemigo.put("salud", nuevaSaludEnemigo);
+		atributosEnemigo.put("energia", nuevaEnergiaEnemigo);
 	}
 
 	public int getId() {
@@ -69,6 +78,12 @@ public class PaqueteAtacar extends Paquete implements Serializable, Cloneable {
 		this.nuevaEnergiaEnemigo = nuevaEnergiaEnemigo;
 	}
 
+	public HashMap<String, Integer> getAtributosPersonaje() {
+		return this.atributosPersonaje;
+	}
 
+	public HashMap<String, Integer> getAtributosEnemigo() {
+		return this.atributosEnemigo;
+	}
 
 }

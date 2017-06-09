@@ -77,14 +77,8 @@ public class EscuchaMensajes extends Thread {
 					
 				case Comando.ATACAR:
 					paqueteAtacar = (PaqueteAtacar) gson.fromJson(objetoLeido, PaqueteAtacar.class);
-					Personaje enem = juego.getEstadoBatalla().getEnemigo();
-					enem.serCurado(paqueteAtacar.getNuevaSaludPersonaje());
-					enem.serEnergizado(paqueteAtacar.getNuevaEnergiaPersonaje());
-					
-					Personaje pers = juego.getEstadoBatalla().getPersonaje();
-					pers.serCurado(paqueteAtacar.getNuevaSaludEnemigo());
-					pers.serEnergizado(paqueteAtacar.getNuevaEnergiaEnemigo());
-	
+					juego.getEstadoBatalla().getEnemigo().actualizarAtributos(paqueteAtacar.getAtributosPersonaje());
+					juego.getEstadoBatalla().getPersonaje().actualizarAtributos(paqueteAtacar.getAtributosEnemigo());
 					juego.getEstadoBatalla().setMiTurno(true);
 					break;
 					
