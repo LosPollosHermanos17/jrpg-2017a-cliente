@@ -5,14 +5,18 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 import mensajeria.PaqueteInventario;
 import recursos.Recursos;
@@ -38,17 +42,17 @@ public class MenuInventario {
 	private JDialog ventanaInventario;
 	private JPanel panelInventario;
 	private JButton[] items;
-	private PaqueteInventario paqueteInventario;
+	private PaqueteInventario inventario;
 	
 	private int cantidadItems;
 	
 	
-	public MenuInventario(JFrame ventana, PaqueteInventario paquete) {
+	public MenuInventario(JFrame ventana, PaqueteInventario inv) {
 		
 		botonInventario = Recursos.botonInventario;
 		panelInventario = new JPanel(new GridLayout(CANT_FILAS, CANT_COLUMNAS));
 		items = new JButton[CANT_FILAS * CANT_COLUMNAS];
-		paqueteInventario = paquete;
+		inventario = inv;
 		ventanaJuego = ventana;
 				
 		inicializarVentana();
@@ -58,10 +62,11 @@ public class MenuInventario {
 	
 	private void inicializarVentana() {
 		
-		ventanaInventario = new JDialog(ventanaJuego, "WOME - Inventario");
+		ventanaInventario = new JDialog(ventanaJuego);
 		ventanaInventario.setPreferredSize(new Dimension(VENTANA_ANCHO, VENTANA_ALTO));
 		ventanaInventario.setResizable(false);
 		ventanaInventario.setModalityType(Dialog.DEFAULT_MODALITY_TYPE);
+		ventanaInventario.setUndecorated(true);
 		ventanaInventario.add(panelInventario);
 		ventanaInventario.pack();
 		ventanaInventario.setLocationRelativeTo(ventanaJuego);
@@ -70,7 +75,28 @@ public class MenuInventario {
 
 	private void inicializarInventario() {
 		
-		// tomo los datos del inventario de la bd
+		JButton botonItem;
+		
+		for (int i = 0 ; i < MAX_CANT_ITEMS ; i++) {
+			
+			botonItem = new JButton("Vacio");
+			JPopupMenu popup = new JPopupMenu();
+	        popup.add(new JMenuItem(new AbstractAction("Descartar Item") {
+	            public void actionPerformed(ActionEvent e) {
+	                JOptionPane.showConfirmDialog(ventanaJuego, "¿Seguro que deseas eliminar este item?");
+	            }
+	        }));
+			
+			botonItem.addMouseListener(new MouseAdapter() {
+				public void mousePressed(MouseEvent e) {
+	                popup.show(e.getComponent(), e.getX(), e.getY());
+	            }
+	        });
+			
+			// agrego el boton al panel (el layout se encargara de acomodarlo como corresponda)
+			panelInventario.add(botonItem);
+		}
+			
 		
 	}
 	
@@ -97,20 +123,6 @@ public class MenuInventario {
 	}
 	
 	
-	public void agregarItem(int idItem) {	
-		
-		if (cantidadItems == MAX_CANT_ITEMS)
-			JOptionPane.showMessageDialog(null, "Debes descartar un item para agregarlo a tu inventario", "Inventario lleno!", JOptionPane.WARNING_MESSAGE);
-		else
-			cantidadItems++;	
-		
-	}
-	
-	private void removerItem(int Iditem) {
-		
-		cantidadItems--;
-		
-	}
 	
 	
 

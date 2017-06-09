@@ -148,7 +148,7 @@ public class EstadoBatalla extends Estado {
 					if (!enemigo.estaVivo()) {
 						
 						// Volver a cero el personaje.
-						personaje.
+//						personaje.
 						
 						juego.getEstadoJuego().setHaySolicitud(true, juego.getPersonaje(), MenuInfoPersonaje.menuGanarBatalla);
 						if(personaje.ganarExperiencia(enemigo.getNivel() * 40)){
