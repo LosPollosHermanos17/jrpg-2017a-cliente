@@ -2,9 +2,7 @@ package interfaz;
 
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.io.IOException;
 import java.util.HashMap;
@@ -13,7 +11,6 @@ import java.util.Map.Entry;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 
 import com.google.gson.Gson;
 
@@ -36,14 +33,11 @@ public class MenuInventario {
 	private final int CANT_FILAS = 3;
 	private final int CANT_COLUMNAS = 3;
 
-	private final int VENTANA_ANCHO = 600;
+	private final int VENTANA_ANCHO = 400;
 	private final int VENTANA_ALTO = 400;
-	
+
 	private final int PANEL_INVENTARIO_ANCHO = 400;
 	private final int PANEL_INVENTARIO_ALTO = 400;
-	
-	private final int PANEL_DESCRIPCION_ANCHO = 300;
-	private final int PANEL_DESCRIPCION_ALTO = 400;
 
 	private final int POS_GRILLA_ACCESORIO = 0;
 	private final int POS_GRILLA_CABEZA = 1;
@@ -55,9 +49,8 @@ public class MenuInventario {
 	private Juego juego;
 	private JFrame ventanaJuego;
 	private JDialog ventanaInventario;
-	private JSplitPane panelVentana;
 	private JPanel panelInventario;
-	private JPanel panelDescripcion;	
+
 	private HashMap<Integer, Integer> itemIdTipoPosicion;
 	private HashMap<Integer, BotonItem> itemPosicionBoton;
 
@@ -65,18 +58,9 @@ public class MenuInventario {
 
 		this.juego = juego;
 		this.ventanaJuego = juego.getPantalla().getFrame();
-		
+
 		this.panelInventario = new JPanel(new GridLayout(CANT_FILAS, CANT_COLUMNAS));
 		this.panelInventario.setPreferredSize(new Dimension(PANEL_INVENTARIO_ANCHO, PANEL_INVENTARIO_ALTO));
-		this.panelInventario.setMinimumSize(new Dimension(PANEL_INVENTARIO_ANCHO, PANEL_INVENTARIO_ALTO));
-		
-
-		this.panelDescripcion = new JPanel(new FlowLayout());
-		this.panelDescripcion.setPreferredSize(new Dimension(PANEL_DESCRIPCION_ANCHO, PANEL_DESCRIPCION_ALTO));
-		this.panelDescripcion.setMinimumSize(new Dimension(PANEL_DESCRIPCION_ANCHO, PANEL_DESCRIPCION_ALTO));
-		
-		this.panelVentana = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panelInventario, panelDescripcion);
-		this.panelVentana.setPreferredSize(new Dimension(VENTANA_ANCHO, VENTANA_ALTO));
 
 		this.itemPosicionBoton = new HashMap<Integer, BotonItem>();
 		this.itemIdTipoPosicion = new HashMap<Integer, Integer>();
@@ -99,7 +83,7 @@ public class MenuInventario {
 		ventanaInventario.setPreferredSize(new Dimension(VENTANA_ANCHO, VENTANA_ALTO));
 		ventanaInventario.setResizable(false);
 		ventanaInventario.setModalityType(Dialog.DEFAULT_MODALITY_TYPE);
-		ventanaInventario.add(panelVentana);
+		ventanaInventario.add(panelInventario);
 		ventanaInventario.pack();
 		ventanaInventario.setLocationRelativeTo(ventanaJuego);
 	}
@@ -129,9 +113,9 @@ public class MenuInventario {
 
 	public void mostrarInventario() {
 		actualizarInventario(this.juego.getPersonaje().getPaqueteInventario().getInventario());
-		ventanaInventario.setVisible(true);		
+		ventanaInventario.setVisible(true);
 	}
-	
+
 	public void actualizarInventario(Inventario inventario) {
 		for (Entry<Integer, Item> entry : inventario.getItems().entrySet()) {
 			int posicion = this.itemIdTipoPosicion.get(entry.getKey());
@@ -139,23 +123,23 @@ public class MenuInventario {
 			boton.actualizarItem(entry.getValue());
 		}
 	}
-	
-	public void eliminarItem(Item item)
-	{		
+
+	public void eliminarItem(Item item) {
 		// quitar el item del personaje
 		PaquetePersonaje paquetePersonaje = this.juego.getPersonaje();
-		
+
 		// Creo un item vacío para actualizar
 		paquetePersonaje.getPaqueteInventario().getItems().put(item.getIdTipo(), new PaqueteItem(-1));
-		paquetePersonaje.setComando(Comando.ACTUALIZARPERSONAJE);		
-	
+		paquetePersonaje.setComando(Comando.ACTUALIZARPERSONAJE);
+
 		// Envío a actualizar al servidor
 		try {
-			this.juego.getCliente().getSalida().writeObject(new Gson().toJson(paquetePersonaje, PaquetePersonaje.class));
+			this.juego.getCliente().getSalida()
+					.writeObject(new Gson().toJson(paquetePersonaje, PaquetePersonaje.class));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		// Actualizo el inventario con el paquete que acabo de enviar
 		this.actualizarInventario(paquetePersonaje.getPaqueteInventario().getInventario());
 	}

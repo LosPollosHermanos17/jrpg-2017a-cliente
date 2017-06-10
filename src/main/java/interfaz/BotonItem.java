@@ -3,8 +3,6 @@ package interfaz;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.util.HashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -40,9 +38,14 @@ public class BotonItem extends JButton {
 		popup = new JPopupMenu();
 		popup.add(new JMenuItem(new AbstractAction("Descartar Item") {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showConfirmDialog(ventanaJuego, "¿Estás seguro que deseas eliminar este ítem?",
-						"Descartar Item", JOptionPane.YES_NO_OPTION);
-				if (0 == JOptionPane.YES_OPTION) {
+				
+				int opcionSeleccionada = 0;
+				
+				opcionSeleccionada = JOptionPane.showConfirmDialog(ventanaJuego, "¿Estás seguro que deseas eliminar este ítem?",
+							"Descartar Item", JOptionPane.YES_NO_OPTION);
+				
+				if (opcionSeleccionada == JOptionPane.YES_OPTION) {
+
 					menuInventario.eliminarItem(item);
 				}
 			}
@@ -62,7 +65,7 @@ public class BotonItem extends JButton {
 		if (item != null && item.getId() > 0) {
 			this.setIcon(new ImageIcon(Recursos.items.get(item.getNombre())));
 			this.setEnabled(true);
-			this.setToolTipText(item.getNombre());
+			this.obtenerDescripcionItem();
 		} else {
 			this.setIcon(null);
 			this.setEnabled(posicionItem);
@@ -74,4 +77,33 @@ public class BotonItem extends JButton {
 		this.posicionItem = posicionItem;
 		this.setEnabled(posicionItem);
 	}
+	
+	private void obtenerDescripcionItem() {
+		
+		String descripcion = "<html>";
+		
+		descripcion = descripcion.concat("<b>" + this.item.getNombre() + "</b>");
+					
+		if (item.getBonoAtaque() > 0)
+			descripcion = descripcion.concat("<br><i> + " + item.getBonoAtaque() + " Ataque</i>");
+		
+		if (item.getBonoDefensa() > 0)
+			descripcion = descripcion.concat("<br><i> + " + item.getBonoDefensa() + " Defensa</i>");
+		
+		if (item.getBonoMagia() > 0)
+			descripcion = descripcion.concat("<br><i> + " + item.getBonoMagia() + " Magia</i>");
+		
+		if (item.getBonoSalud() > 0)
+			descripcion = descripcion.concat("<br><i> + " + item.getBonoSalud() + " Salud</i>");
+		
+		if (item.getBonoEnergia() > 0)
+			descripcion = descripcion.concat("<br><i> + " + item.getBonoEnergia() + " Energia</i>");
+
+		
+		descripcion = descripcion.concat("</html>");
+		
+		this.setToolTipText(descripcion);
+		
+	}
+	
 }
