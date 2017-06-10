@@ -15,6 +15,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 import dominio.Item;
+import estados.Estado;
+import mensajeria.Comando;
+import mensajeria.PaqueteMovimiento;
+import mensajeria.PaquetePersonaje;
 import recursos.Recursos;
 
 public class BotonItem extends JButton {
@@ -22,10 +26,12 @@ public class BotonItem extends JButton {
 	private Item item;
 	private JPopupMenu popup;
 	private boolean posicionItem;
+	private MenuInventario menuInventario;
 
-	public BotonItem(Item item, JFrame ventanaJuego) {
+	public BotonItem(Item item, MenuInventario menuInventario, JFrame ventanaJuego) {
 		super();
 		this.item = item;
+		this.menuInventario = menuInventario;
 		this.actualizarItem(item);
 		this.inicializarPopup(ventanaJuego);
 	}
@@ -37,11 +43,7 @@ public class BotonItem extends JButton {
 				JOptionPane.showConfirmDialog(ventanaJuego, "¿Estás seguro que deseas eliminar este ítem?",
 						"Descartar Item", JOptionPane.YES_NO_OPTION);
 				if (0 == JOptionPane.YES_OPTION) {
-
-					JMenuItem mi = (JMenuItem) e.getSource();
-					JPopupMenu p = (JPopupMenu) mi.getParent();
-					JButton b = (JButton) p.getInvoker();
-					b.setIcon(null);
+					menuInventario.eliminarItem(item);
 				}
 			}
 		}));
@@ -57,7 +59,7 @@ public class BotonItem extends JButton {
 
 	public void actualizarItem(Item item) {
 		this.item = item;
-		if (item != null) {
+		if (item != null && item.getId() > 0) {
 			this.setIcon(new ImageIcon(Recursos.items.get(item.getNombre())));
 			this.setEnabled(true);
 			this.setToolTipText(item.getNombre());
@@ -67,9 +69,8 @@ public class BotonItem extends JButton {
 			this.setToolTipText(null);
 		}
 	}
-	
-	public void setPosicionItem(boolean posicionItem)
-	{
+
+	public void setPosicionItem(boolean posicionItem) {
 		this.posicionItem = posicionItem;
 		this.setEnabled(posicionItem);
 	}

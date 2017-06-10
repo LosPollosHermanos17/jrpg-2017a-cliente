@@ -6,16 +6,23 @@ import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
+import com.google.gson.Gson;
+
 import dominio.Inventario;
 import dominio.Item;
 import juego.Juego;
+import mensajeria.Comando;
+import mensajeria.PaqueteItem;
+import mensajeria.PaquetePersonaje;
 import recursos.Recursos;
 
 public class MenuInventario {
@@ -51,7 +58,7 @@ public class MenuInventario {
 	private JSplitPane panelVentana;
 	private JPanel panelInventario;
 	private JPanel panelDescripcion;	
-	private HashMap<String, Integer> itemTipoPosicion;
+	private HashMap<Integer, Integer> itemIdTipoPosicion;
 	private HashMap<Integer, BotonItem> itemPosicionBoton;
 
 	public MenuInventario(Juego juego) {
@@ -72,18 +79,18 @@ public class MenuInventario {
 		this.panelVentana.setPreferredSize(new Dimension(VENTANA_ANCHO, VENTANA_ALTO));
 
 		this.itemPosicionBoton = new HashMap<Integer, BotonItem>();
-		this.itemTipoPosicion = new HashMap<String, Integer>();
+		this.itemIdTipoPosicion = new HashMap<Integer, Integer>();
 
-		this.itemTipoPosicion.put("ManoIzquierda", POS_GRILLA_MANOS1);
-		this.itemTipoPosicion.put("Pies", POS_GRILLA_PIES);
-		this.itemTipoPosicion.put("Cabeza", POS_GRILLA_CABEZA);
-		this.itemTipoPosicion.put("Pecho", POS_GRILLA_PECHO);
-		this.itemTipoPosicion.put("Accesorio", POS_GRILLA_ACCESORIO);
-		this.itemTipoPosicion.put("ManoDerecha", POS_GRILLA_MANOS2);
+		this.itemIdTipoPosicion.put(1, POS_GRILLA_MANOS1);
+		this.itemIdTipoPosicion.put(2, POS_GRILLA_MANOS2);
+		this.itemIdTipoPosicion.put(3, POS_GRILLA_PIES);
+		this.itemIdTipoPosicion.put(4, POS_GRILLA_CABEZA);
+		this.itemIdTipoPosicion.put(5, POS_GRILLA_PECHO);
+		this.itemIdTipoPosicion.put(6, POS_GRILLA_ACCESORIO);
 
 		inicializarInventario();
 		inicializarVentana();
-		actualizarInventario();
+		actualizarInventario(this.juego.getPersonaje().getPaqueteInventario().getInventario());
 	}
 
 	private void inicializarVentana() {
@@ -99,7 +106,7 @@ public class MenuInventario {
 
 	private void inicializarInventario() {
 		for (int i = 0; i < CANT_FILAS * CANT_COLUMNAS; i++) {
-			BotonItem botonItem = new BotonItem(null, ventanaJuego);
+			BotonItem botonItem = new BotonItem(null, this, ventanaJuego);
 			botonItem.setPosicionItem(i == POS_GRILLA_ACCESORIO || i == POS_GRILLA_CABEZA || i == POS_GRILLA_MANOS1
 					|| i == POS_GRILLA_PECHO || i == POS_GRILLA_MANOS2 || i == POS_GRILLA_PIES);
 			this.itemPosicionBoton.put(i, botonItem);
@@ -121,19 +128,35 @@ public class MenuInventario {
 	}
 
 	public void mostrarInventario() {
-		actualizarInventario();
+		actualizarInventario(this.juego.getPersonaje().getPaqueteInventario().getInventario());
 		ventanaInventario.setVisible(true);		
 	}
-
-	public void actualizarInventario() {
-		Inventario inventario = this.juego.getPersonaje().getPaqueteInventario().getInventario();
-		for (Item item : inventario.getItems().values()) {
-			if (this.itemTipoPosicion.containsKey(item.getTipo())) {
-				int posicion = this.itemTipoPosicion.get(item.getTipo());
-				BotonItem boton = this.itemPosicionBoton.get(posicion);
-				boton.actualizarItem(item);
-			}
+	
+	public void actualizarInventario(Inventario inventario) {
+		for (Entry<Integer, Item> entry : inventario.getItems().entrySet()) {
+			int posicion = this.itemIdTipoPosicion.get(entry.getKey());
+			BotonItem boton = this.itemPosicionBoton.get(posicion);
+			boton.actualizarItem(entry.getValue());
 		}
 	}
-
+	
+	public void eliminarItem(Item item)
+	{		
+		// quitar el item del personaje
+		PaquetePersonaje paquetePersonaje = this.juego.getPersonaje();
+		
+		// Creo un item vacío para actualizar
+		paquetePersonaje.getPaqueteInventario().getItems().put(item.getIdTipo(), new PaqueteItem(-1));
+		paquetePersonaje.setComando(Comando.ACTUALIZARPERSONAJE);		
+	
+		// Envío a actualizar al servidor
+		try {
+			this.juego.getCliente().getSalida().writeObject(new Gson().toJson(paquetePersonaje, PaquetePersonaje.class));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		// Actualizo el inventario con el paquete que acabo de enviar
+		this.actualizarInventario(paquetePersonaje.getPaqueteInventario().getInventario());
+	}
 }

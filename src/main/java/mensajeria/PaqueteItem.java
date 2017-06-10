@@ -19,8 +19,12 @@ public class PaqueteItem extends Paquete implements Serializable, Cloneable {
 	private int fuerzaRequerida;
 	private int destrezaRequerida;
 	private int inteligenciaRequerida;
-
+	
 	public PaqueteItem() {
+	}
+	
+	public PaqueteItem(int id) {
+		this.id = id;
 	}
 
 	public PaqueteItem(Item item) {
