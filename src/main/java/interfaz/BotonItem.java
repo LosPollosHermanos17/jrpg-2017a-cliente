@@ -34,7 +34,7 @@ public class BotonItem extends JButton {
 		this.inicializarPopup(ventanaJuego);
 	}
 
-	private void inicializarPopup(JFrame ventanaJuego) {
+	private void inicializarPopup(final JFrame ventanaJuego) {
 		popup = new JPopupMenu();
 		popup.add(new JMenuItem(new AbstractAction("Descartar Item") {
 			public void actionPerformed(ActionEvent e) {
