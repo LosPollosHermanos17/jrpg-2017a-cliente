@@ -41,6 +41,7 @@ public class PaqueteInventario extends Paquete implements Serializable, Cloneabl
 			auxItems.put(entry.getKey(), entry.getValue().getItem());
 
 		Inventario inventario = new Inventario(auxItems);
+		inventario.setId(this.getId());
 		return inventario;
 	}
 

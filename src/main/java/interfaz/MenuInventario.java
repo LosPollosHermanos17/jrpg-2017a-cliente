@@ -15,6 +15,7 @@ import javax.swing.JSplitPane;
 
 import dominio.Inventario;
 import dominio.Item;
+import juego.Juego;
 import recursos.Recursos;
 
 public class MenuInventario {
@@ -44,19 +45,19 @@ public class MenuInventario {
 	private final int POS_GRILLA_MANOS2 = 5;
 	private final int POS_GRILLA_PIES = 7;
 
+	private Juego juego;
 	private JFrame ventanaJuego;
 	private JDialog ventanaInventario;
 	private JSplitPane panelVentana;
 	private JPanel panelInventario;
-	private JPanel panelDescripcion;
-	private Inventario inventario;
+	private JPanel panelDescripcion;	
 	private HashMap<String, Integer> itemTipoPosicion;
 	private HashMap<Integer, BotonItem> itemPosicionBoton;
 
-	public MenuInventario(JFrame v, Inventario i) {
+	public MenuInventario(Juego juego) {
 
-		this.ventanaJuego = v;
-		this.inventario = i;
+		this.juego = juego;
+		this.ventanaJuego = juego.getPantalla().getFrame();
 		
 		this.panelInventario = new JPanel(new GridLayout(CANT_FILAS, CANT_COLUMNAS));
 		this.panelInventario.setPreferredSize(new Dimension(PANEL_INVENTARIO_ANCHO, PANEL_INVENTARIO_ALTO));
@@ -120,10 +121,12 @@ public class MenuInventario {
 	}
 
 	public void mostrarInventario() {
-		ventanaInventario.setVisible(true);
+		actualizarInventario();
+		ventanaInventario.setVisible(true);		
 	}
 
 	public void actualizarInventario() {
+		Inventario inventario = this.juego.getPersonaje().getPaqueteInventario().getInventario();
 		for (Item item : inventario.getItems().values()) {
 			if (this.itemTipoPosicion.containsKey(item.getTipo())) {
 				int posicion = this.itemTipoPosicion.get(item.getTipo());
