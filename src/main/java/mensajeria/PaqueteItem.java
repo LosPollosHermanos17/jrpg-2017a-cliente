@@ -6,7 +6,8 @@ import dominio.Item;
 
 public class PaqueteItem extends Paquete implements Serializable, Cloneable {
 
-	private int id;	
+	private int id;
+	private int idTipo;
 	private String nombre;
 	private String tipo;
 	private int bonoAtaque;
@@ -22,6 +23,21 @@ public class PaqueteItem extends Paquete implements Serializable, Cloneable {
 	public PaqueteItem() {
 	}
 
+	public PaqueteItem(Item item) {
+		this.id = item.getId();
+		this.idTipo = item.getIdTipo();
+		this.tipo = item.getTipo();
+		this.nombre = item.getNombre();
+		this.bonoAtaque = item.getBonoAtaque();
+		this.bonoDefensa = item.getBonoDefensa();
+		this.bonoMagia = item.getBonoMagia();
+		this.bonoSalud = item.getBonoSalud();
+		this.bonoEnergia = item.getBonoEnergia();
+		this.fuerzaRequerida = item.getFuerzaRequerida();
+		this.destrezaRequerida = item.getDestrezaRequerida();
+		this.inteligenciaRequerida = item.getInteligenciaRequerida();
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -29,11 +45,19 @@ public class PaqueteItem extends Paquete implements Serializable, Cloneable {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+
+	public int getIdTipo() {
+		return idTipo;
+	}
+
+	public void setIdTipo(int idTipo) {
+		this.idTipo = idTipo;
+	}
+
 	public String getNombre() {
 		return nombre;
 	}
-	
+
 	public String getTipo() {
 		return tipo;
 	}
@@ -111,8 +135,8 @@ public class PaqueteItem extends Paquete implements Serializable, Cloneable {
 	}
 
 	public Item getItem() {
-		return new Item(this.getId(), this.getTipo(), this.getNombre(), this.getBonoAtaque(), this.getBonoDefensa(),
-				this.getBonoMagia(), this.getBonoSalud(), this.getBonoEnergia(), this.getFuerzaRequerida(),
-				this.getDestrezaRequerida(), this.getInteligenciaRequerida());
+		return new Item(this.getId(), this.getIdTipo(), this.getTipo(), this.getNombre(), this.getBonoAtaque(),
+				this.getBonoDefensa(), this.getBonoMagia(), this.getBonoSalud(), this.getBonoEnergia(),
+				this.getFuerzaRequerida(), this.getDestrezaRequerida(), this.getInteligenciaRequerida());
 	}
 }

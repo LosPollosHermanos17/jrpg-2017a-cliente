@@ -36,6 +36,8 @@ public class PaquetePersonaje extends Paquete implements Serializable, Cloneable
 		this.destreza = personaje.getDestreza();
 		this.fuerza = personaje.getFuerza();
 		this.inteligencia = personaje.getInteligencia();
+		
+		this.inventario.actualizar(personaje.getInventario());
 	}
 
 	public PaqueteInventario getPaqueteInventario() {

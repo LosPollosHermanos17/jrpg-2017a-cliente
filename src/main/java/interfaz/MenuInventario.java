@@ -2,25 +2,16 @@ package interfaz;
 
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.HashMap;
-import java.util.Map;
 
-import javax.swing.AbstractAction;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
+import javax.swing.JSplitPane;
 
 import dominio.Inventario;
 import dominio.Item;
@@ -37,8 +28,14 @@ public class MenuInventario {
 	private final int CANT_FILAS = 3;
 	private final int CANT_COLUMNAS = 3;
 
-	private final int VENTANA_ANCHO = 400;
+	private final int VENTANA_ANCHO = 600;
 	private final int VENTANA_ALTO = 400;
+	
+	private final int PANEL_INVENTARIO_ANCHO = 400;
+	private final int PANEL_INVENTARIO_ALTO = 400;
+	
+	private final int PANEL_DESCRIPCION_ANCHO = 300;
+	private final int PANEL_DESCRIPCION_ALTO = 400;
 
 	private final int POS_GRILLA_ACCESORIO = 0;
 	private final int POS_GRILLA_CABEZA = 1;
@@ -49,9 +46,10 @@ public class MenuInventario {
 
 	private JFrame ventanaJuego;
 	private JDialog ventanaInventario;
+	private JSplitPane panelVentana;
 	private JPanel panelInventario;
+	private JPanel panelDescripcion;
 	private Inventario inventario;
-
 	private HashMap<String, Integer> itemTipoPosicion;
 	private HashMap<Integer, BotonItem> itemPosicionBoton;
 
@@ -59,16 +57,28 @@ public class MenuInventario {
 
 		this.ventanaJuego = v;
 		this.inventario = i;
+		
 		this.panelInventario = new JPanel(new GridLayout(CANT_FILAS, CANT_COLUMNAS));
+		this.panelInventario.setPreferredSize(new Dimension(PANEL_INVENTARIO_ANCHO, PANEL_INVENTARIO_ALTO));
+		this.panelInventario.setMinimumSize(new Dimension(PANEL_INVENTARIO_ANCHO, PANEL_INVENTARIO_ALTO));
+		
+
+		this.panelDescripcion = new JPanel(new FlowLayout());
+		this.panelDescripcion.setPreferredSize(new Dimension(PANEL_DESCRIPCION_ANCHO, PANEL_DESCRIPCION_ALTO));
+		this.panelDescripcion.setMinimumSize(new Dimension(PANEL_DESCRIPCION_ANCHO, PANEL_DESCRIPCION_ALTO));
+		
+		this.panelVentana = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panelInventario, panelDescripcion);
+		this.panelVentana.setPreferredSize(new Dimension(VENTANA_ANCHO, VENTANA_ALTO));
 
 		this.itemPosicionBoton = new HashMap<Integer, BotonItem>();
 		this.itemTipoPosicion = new HashMap<String, Integer>();
 
-		this.itemTipoPosicion.put("Manos", POS_GRILLA_MANOS1);
+		this.itemTipoPosicion.put("ManoIzquierda", POS_GRILLA_MANOS1);
 		this.itemTipoPosicion.put("Pies", POS_GRILLA_PIES);
 		this.itemTipoPosicion.put("Cabeza", POS_GRILLA_CABEZA);
 		this.itemTipoPosicion.put("Pecho", POS_GRILLA_PECHO);
 		this.itemTipoPosicion.put("Accesorio", POS_GRILLA_ACCESORIO);
+		this.itemTipoPosicion.put("ManoDerecha", POS_GRILLA_MANOS2);
 
 		inicializarInventario();
 		inicializarVentana();
@@ -81,7 +91,7 @@ public class MenuInventario {
 		ventanaInventario.setPreferredSize(new Dimension(VENTANA_ANCHO, VENTANA_ALTO));
 		ventanaInventario.setResizable(false);
 		ventanaInventario.setModalityType(Dialog.DEFAULT_MODALITY_TYPE);
-		ventanaInventario.add(panelInventario);
+		ventanaInventario.add(panelVentana);
 		ventanaInventario.pack();
 		ventanaInventario.setLocationRelativeTo(ventanaJuego);
 	}
