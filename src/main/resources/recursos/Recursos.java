@@ -79,8 +79,8 @@ public class Recursos {
 	public static BufferedImage menuBatalla;
 	public static BufferedImage menuBatallaDeshabilitado;
 	
-	public static Map<String, BufferedImage> habilidades = new HashMap<>();
-	public static Map<String, BufferedImage> items = new HashMap<>();
+	public static Map<String, BufferedImage> habilidades = new HashMap<String, BufferedImage>();
+	public static Map<String, BufferedImage> items = new HashMap<String, BufferedImage>();
 	// Fin Batalla
 	
 
@@ -339,26 +339,24 @@ public class Recursos {
 		
 		//Inventario
 		botonInventario = CargadorImagen.cargarImagen("/BotonInventario.png");
-		items.put("Espada de Bronce", CargadorImagen.cargarImagen("/Espada de plata.png"));
-		items.put("Espada de Plata", CargadorImagen.cargarImagen("/Espada de plata.png"));
-		items.put("Espada de Oro", CargadorImagen.cargarImagen("/Espada de plata.png"));
-		items.put("Escudo de Bronce", CargadorImagen.cargarImagen("/Espada de plata.png"));
-		items.put("Escudo de Plata", CargadorImagen.cargarImagen("/Espada de plata.png"));
-		items.put("Escudo de Oro", CargadorImagen.cargarImagen("/Espada de plata.png"));
-		items.put("Botas de Bronce", CargadorImagen.cargarImagen("/Espada de plata.png"));
-		items.put("Botas de Plata", CargadorImagen.cargarImagen("/Espada de plata.png"));
-		items.put("Botas de Oro", CargadorImagen.cargarImagen("/Espada de plata.png"));
-		items.put("Casco de Bronce", CargadorImagen.cargarImagen("/Espada de plata.png"));
-		items.put("Casco de Plata", CargadorImagen.cargarImagen("/Espada de plata.png"));
-		items.put("Casco de Oro", CargadorImagen.cargarImagen("/Espada de plata.png"));
-		items.put("Armadura de Bronce", CargadorImagen.cargarImagen("/Espada de plata.png"));
-		items.put("Armadura de Plata", CargadorImagen.cargarImagen("/Espada de plata.png"));
-		items.put("Armadura de Oro", CargadorImagen.cargarImagen("/Espada de plata.png"));
-		items.put("Piedra Mágica", CargadorImagen.cargarImagen("/Espada de plata.png"));
-		items.put("Piedra de la Vida", CargadorImagen.cargarImagen("/Espada de plata.png"));
-		items.put("Energizante", CargadorImagen.cargarImagen("/Espada de plata.png"));
-
-		
+		items.put("Espada de Bronce", CargadorImagen.cargarImagen("/Espada de Bronce.png"));
+		items.put("Espada de Plata", CargadorImagen.cargarImagen("/Espada de Plata.png"));
+		items.put("Espada de Oro", CargadorImagen.cargarImagen("/Espada de Oro.png"));
+		items.put("Escudo de Bronce", CargadorImagen.cargarImagen("/Escudo de Bronce.png"));
+		items.put("Escudo de Plata", CargadorImagen.cargarImagen("/Escudo de Plata.png"));
+		items.put("Escudo de Oro", CargadorImagen.cargarImagen("/Escudo de Oro.png"));
+		items.put("Botas de Bronce", CargadorImagen.cargarImagen("/Botas de Bronce.png"));
+		items.put("Botas de Plata", CargadorImagen.cargarImagen("/Botas de Plata.png"));
+		items.put("Botas de Oro", CargadorImagen.cargarImagen("/Botas de Oro.png"));
+		items.put("Casco de Bronce", CargadorImagen.cargarImagen("/Casco de Bronce.png"));
+		items.put("Casco de Plata", CargadorImagen.cargarImagen("/Casco de Plata.png"));
+		items.put("Casco de Oro", CargadorImagen.cargarImagen("/Casco de Oro.png"));
+		items.put("Armadura de Bronce", CargadorImagen.cargarImagen("/Armadura de Bronce.png"));
+		items.put("Armadura de Plata", CargadorImagen.cargarImagen("/Armadura de Plata.png"));
+		items.put("Armadura de Oro", CargadorImagen.cargarImagen("/Armadura de Oro.png"));
+		items.put("Piedra Mágica", CargadorImagen.cargarImagen("/Piedra Mágica.png"));
+		items.put("Piedra de la Vida", CargadorImagen.cargarImagen("/Piedra de la Vida.png"));
+		items.put("Energizante", CargadorImagen.cargarImagen("/Energizante.png"));
 		
 		
 		// Mapa
