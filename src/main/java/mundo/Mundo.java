@@ -24,6 +24,8 @@ public class Mundo {
 	private int yMaximo;
 
 	private Grafo grafoDeTilesNoSolidos;
+	
+	private boolean clickEnMercado;
 
 	public Mundo(Juego juego, String pathMap, String pathObstac) {
 		this.juego = juego;
@@ -84,7 +86,8 @@ public class Mundo {
 		}
 	}
 
-	public Tile getTile(int x, int y) {
+	public Tile getTile(int x, int y) {	
+			
 		Tile t = Tile.tiles[tiles[x][y]];
 		if (t == null) {
 			return Tile.aubenor[Tile.aubenorBase];
@@ -212,4 +215,19 @@ public class Mundo {
 
 		return tile;
 	}
+
+	public boolean getClickEnMercado() {
+		return clickEnMercado;
+	}
+
+	public void setClickEnMercado(boolean clickEnMercado) {
+		this.clickEnMercado = clickEnMercado;
+	}
+
+	public int[][] getTiles() {
+		return tiles;
+	}
+	
+	
+	
 }

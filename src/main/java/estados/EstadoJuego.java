@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import com.google.gson.Gson;
 
 import entidades.Entidad;
+import frames.MenuMercado;
 import interfaz.EstadoDePersonaje;
 import interfaz.MenuInfoPersonaje;
 import interfaz.MenuInventario;
@@ -38,6 +39,7 @@ public class EstadoJuego extends Estado {
 	private final Gson gson = new Gson();	
 	private BufferedImage miniaturaPersonaje;	
 	private MenuInventario menuInventario;
+	private MenuMercado menuMercado;
 	private int[] posMouse;
 	
 	MenuInfoPersonaje menuEnemigo;
@@ -49,6 +51,7 @@ public class EstadoJuego extends Estado {
 		entidadPersonaje = new Entidad(juego, mundo, 64, 64, juego.getPersonaje().getNombre(), 0, 0, Recursos.personaje.get(juego.getPersonaje().getRaza()), 150);
 		miniaturaPersonaje = Recursos.personaje.get(paquetePersonaje.getRaza()).get(5)[0];
 		menuInventario = new MenuInventario(juego);
+		menuMercado = new MenuMercado(juego, menuInventario);
 
 		try {
 			// Le envio al servidor que me conecte al mapa y mi posicion
@@ -67,7 +70,24 @@ public class EstadoJuego extends Estado {
 		mundo.actualizar();
 		entidadPersonaje.actualizar();
 		
-		// Obtengo los clicks realizados dentro del juego.
+		// Dentro de entidadPersonaje.actualizar() se determino si se realizo un click
+		// sobre uno de los mercados dentro del mundo. En caso de que se haya realizado
+		// muestro el cartel para ingresar en el mercado.
+		if (mundo.getClickEnMercado() == true) {			
+			
+			int opcionSeleccionada = JOptionPane.showConfirmDialog(null, "¿Deseas ingresar al Mercado de Intercambios?",
+					"Mercado de Intercambios", JOptionPane.YES_NO_OPTION);
+		
+			if (opcionSeleccionada == JOptionPane.YES_OPTION) {				
+				menuMercado.mostrar(juego); 							
+			}
+			
+			// Vuelvo a setear el flag en false para que no siga apareciendo el cartel.
+			mundo.setClickEnMercado(false);
+			
+		}
+		
+		// Obtengo los clicks realizados en la pantalla.
 		// El objetivo es determinar si se hizo un click en el boton "Inventario".
 		if (juego.getHandlerMouse().getNuevoClick()) {
 			posMouse = juego.getHandlerMouse().getPosMouse();

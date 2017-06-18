@@ -364,14 +364,14 @@ public class Recursos {
 		
 		Tile.aubenor = new Tile[81];
 		
-		boolean [][] solidezAubenor = {{true, true, false, true, false, true, true, true, true, true},
-				{true, true, true, true, true, true, true, true, true, true},
-				{true, true, true, true, true, true, true, true, true, true},
-				{true, false, false, false, false , false, false ,false, true, true},
-				{false, false, false, false, false , false, false ,false, true, true},
-				{false, true, true, true, true, true, true, true, true, true},
-				{true, true, true, true, true, true, true, true, true, true},
-				{true, true, true, true, true, true, true, true, true, true}};	
+		boolean [][] solidezAubenor = { {true, 	true, 	false, 	true, 	false, 	true, 	true, 	true, 	true, 	true},
+										{true, 	true, 	true, 	true, 	true, 	true, 	true, 	true, 	true, 	true},
+										{true, 	true, 	true, 	true, 	true, 	true, 	true, 	true, 	true, 	true},
+										{true, 	true, 	true, 	true, 	true, 	true, 	true,	true, 	true, 	true},
+										{true,  true, 	true, 	true, 	true,  	true, 	true,	true, 	true, 	true},
+										{false, true, 	true, 	true, 	true, 	true, 	true, 	true, 	true, 	true},
+										{true, 	true, 	true, 	true, 	true, 	true, 	true, 	true, 	true, 	true},
+										{true, 	true, 	true, 	true, 	true, 	true, 	true, 	true, 	true, 	true}};	
 		
 		for(int y = 0 ; y < 8 ; y++){
 			
