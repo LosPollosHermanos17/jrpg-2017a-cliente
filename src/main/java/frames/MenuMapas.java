@@ -1,6 +1,7 @@
 package frames;
 
 import mensajeria.Comando;
+import mensajeria.ComandoSalir;
 
 import java.awt.Color;
 
@@ -41,7 +42,7 @@ public class MenuMapas extends JFrame {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				synchronized(cliente){
-					cliente.setAccion(Comando.SALIR);
+					cliente.setComando(new ComandoSalir());
 					cliente.notify();
 				}
 				dispose();

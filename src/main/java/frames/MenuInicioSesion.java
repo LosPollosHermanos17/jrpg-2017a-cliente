@@ -11,6 +11,8 @@ import javax.swing.border.EmptyBorder;
 
 import cliente.*;
 import mensajeria.Comando;
+import mensajeria.ComandoInicioSesion;
+import mensajeria.ComandoSalir;
 
 import javax.swing.JTextField;
 import javax.swing.JLabel;
@@ -39,7 +41,7 @@ public class MenuInicioSesion extends JFrame {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				synchronized(cliente){
-					cliente.setAccion(Comando.SALIR);
+					cliente.setComando(new ComandoSalir());
 					cliente.notify();
 				}
 				setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -95,17 +97,15 @@ public class MenuInicioSesion extends JFrame {
 				btnConectar.setIcon(new ImageIcon(MenuInicioSesion.class.getResource("/frames/BotonMenu.png")));
 				btnConectar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						synchronized(cliente){
-							cliente.setAccion(Comando.INICIOSESION);
+						synchronized(cliente){							
 							cliente.getPaqueteUsuario().setUsername(textField.getText());
 							cliente.getPaqueteUsuario().setPassword(passwordField.getText());
+							cliente.setComando(new ComandoInicioSesion(cliente.getPaqueteUsuario()));
 							cliente.notify();
 							dispose();
-						}
-						
+						}						
 					}
 				});
-		
 				
 				JLabel labelBackground = new JLabel("");
 				labelBackground.setBounds(0, 0, 444, 271);

@@ -2,7 +2,7 @@ package mensajeria;
 
 import java.io.Serializable;
 import java.util.Map;
-public class PaqueteMochila extends Paquete implements Serializable, Cloneable {
+public class PaqueteMochila implements Serializable, Cloneable {
 
 	private int id;
 	private Map<Integer, PaqueteItem> items;
@@ -28,4 +28,13 @@ public class PaqueteMochila extends Paquete implements Serializable, Cloneable {
 		this.items = items;
 	}
 	
+	public Object clone() {
+		Object obj = null;
+		try {
+			obj = super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		return obj;
+	}	
 }

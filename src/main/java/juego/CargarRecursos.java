@@ -2,6 +2,7 @@ package juego;
 
 import cliente.Cliente;
 import mensajeria.Comando;
+import mensajeria.ComandoSalir;
 import recursos.Recursos;
 
 public class CargarRecursos extends Thread {
@@ -17,7 +18,7 @@ public class CargarRecursos extends Thread {
 		synchronized (cliente) {
 			Recursos.cargar(cliente.getMenuCarga());
 			
-			cliente.setAccion(Comando.SALIR);
+			cliente.setComando(new ComandoSalir());
 			cliente.notify();
 		}
 	}

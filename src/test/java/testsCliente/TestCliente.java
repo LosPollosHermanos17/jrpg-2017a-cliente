@@ -17,7 +17,7 @@ import com.google.gson.JsonSyntaxException;
 
 import cliente.Cliente;
 import mensajeria.Comando;
-import mensajeria.Paquete;
+import mensajeria.Comando;
 import mensajeria.PaquetePersonaje;
 import mensajeria.PaqueteUsuario;
 
@@ -27,7 +27,7 @@ public class TestCliente {
 	private Gson gson = new Gson();
 
 	/// Para realizar los test es necesario iniciar el servidor
-	public void server(final Queue<Paquete> paquetes) {
+	public void server(final Queue<Comando> paquetes) {
 		t = new Thread(new Runnable() {
 			public void run() {
 
@@ -48,7 +48,7 @@ public class TestCliente {
 					while (!paquetes.isEmpty()) {
 						System.out.println("Paquetes: " + paquetes.size());
 						entrada.readObject();
-						Paquete paquete = paquetes.poll();
+						Comando paquete = paquetes.poll();
 						if (paquete.getMensaje() != "0")
 							paquete.setMensaje("1");
 						salida.writeObject(gson.toJson(paquete));
@@ -77,15 +77,15 @@ public class TestCliente {
 
 	@Test
 	public void testConexionConElServidor() {
-		Queue<Paquete> cola = new LinkedList<Paquete>();
-		cola.add(new Paquete());
+		Queue<Comando> cola = new LinkedList<Comando>();
+		cola.add(new Comando());
 		this.server(cola);
 
 		Cliente cliente = new Cliente();
 		Assert.assertEquals(1, 1);
 		try {
 			// Cierro las conexiones
-			Paquete p = new Paquete();
+			Comando p = new Comando();
 			p.setComando(Comando.DESCONECTAR);
 			p.setIp(cliente.getMiIp());
 			cliente.getSalida().writeObject(gson.toJson(p));
@@ -109,7 +109,7 @@ public class TestCliente {
 		pu.setPassword("test");
 		pu.setMensaje("1");
 
-		Queue<Paquete> cola = new LinkedList<Paquete>();
+		Queue<Comando> cola = new LinkedList<Comando>();
 		cola.add(pu);
 		cola.add(pu);
 		this.server(cola);
@@ -123,17 +123,17 @@ public class TestCliente {
 			cliente.getSalida().writeObject(gson.toJson(pu));
 
 			// Recibo la respuesta del servidor
-			Paquete resultado = (Paquete) gson.fromJson((String) cliente.getEntrada().readObject(), Paquete.class);
+			Comando resultado = (Comando) gson.fromJson((String) cliente.getEntrada().readObject(), Comando.class);
 
 			// Cierro las conexiones
-			Paquete p = new Paquete();
+			Comando p = new Comando();
 			p.setComando(Comando.DESCONECTAR);
 			p.setIp(cliente.getMiIp());
 			cliente.getSalida().writeObject(gson.toJson(p));
 			cliente.getSalida().close();
 			cliente.getEntrada().close();
 			cliente.getSocket().close();
-			Assert.assertEquals(Paquete.msjExito, resultado.getMensaje());
+			Assert.assertEquals(Comando.msjExito, resultado.getMensaje());
 
 		} catch (JsonSyntaxException | ClassNotFoundException | IOException e) {
 			e.printStackTrace();
@@ -151,7 +151,7 @@ public class TestCliente {
 		pu.setPassword("test32");
 		pu.setMensaje("0");
 
-		Queue<Paquete> cola = new LinkedList<Paquete>();
+		Queue<Comando> cola = new LinkedList<Comando>();
 		cola.add(pu);
 		cola.add(pu);
 		this.server(cola);
@@ -163,17 +163,17 @@ public class TestCliente {
 			// Envio el paquete para registrarme
 			cliente.getSalida().writeObject(gson.toJson(pu));
 			// Recibo la respuesta del servidor
-			Paquete resultado = (Paquete) gson.fromJson((String) cliente.getEntrada().readObject(), Paquete.class);
+			Comando resultado = (Comando) gson.fromJson((String) cliente.getEntrada().readObject(), Comando.class);
 
 			// Cierro las conexiones
-			Paquete p = new Paquete();
+			Comando p = new Comando();
 			p.setComando(Comando.DESCONECTAR);
 			p.setIp(cliente.getMiIp());
 			cliente.getSalida().writeObject(gson.toJson(p));
 			cliente.getSalida().close();
 			cliente.getEntrada().close();
 			cliente.getSocket().close();
-			Assert.assertEquals(Paquete.msjFracaso, resultado.getMensaje());
+			Assert.assertEquals(Comando.msjFracaso, resultado.getMensaje());
 
 		} catch (JsonSyntaxException | ClassNotFoundException | IOException e) {
 			e.printStackTrace();
@@ -204,7 +204,7 @@ public class TestCliente {
 		pp.setRaza("Asesino");
 		pp.setSaludTope(1);
 
-		Queue<Paquete> cola = new LinkedList<Paquete>();
+		Queue<Comando> cola = new LinkedList<Comando>();
 		cola.add(pu);
 		cola.add(pp);
 		cola.add(pp);
@@ -217,7 +217,7 @@ public class TestCliente {
 			cliente.getSalida().writeObject(gson.toJson(pu));
 
 			// Recibo la respuesta del servidor
-			Paquete paqueteAux = (Paquete) gson.fromJson((String) cliente.getEntrada().readObject(), Paquete.class);
+			Comando paqueteAux = (Comando) gson.fromJson((String) cliente.getEntrada().readObject(), Comando.class);
 
 			// Envio el paquete de registro de personaje
 			cliente.getSalida().writeObject(gson.toJson(pp));
@@ -226,7 +226,7 @@ public class TestCliente {
 			pp = (PaquetePersonaje) gson.fromJson((String) cliente.getEntrada().readObject(), PaquetePersonaje.class);
 
 			// Cierro las conexiones
-			Paquete p = new Paquete();
+			Comando p = new Comando();
 			p.setComando(Comando.DESCONECTAR);
 			p.setIp(cliente.getMiIp());
 			cliente.getSalida().writeObject(gson.toJson(p));
@@ -246,7 +246,7 @@ public class TestCliente {
 
 		PaquetePersonaje paquete = new PaquetePersonaje();
 		paquete.setNombre("PjTest");
-		Queue<Paquete> cola = new LinkedList<Paquete>();
+		Queue<Comando> cola = new LinkedList<Comando>();
 		cola.add(paquete);
 		cola.add(paquete);
 		this.server(cola);
@@ -267,7 +267,7 @@ public class TestCliente {
 					.fromJson((String) cliente.getEntrada().readObject(), PaquetePersonaje.class);
 
 			// Cierro las conexiones
-			Paquete p = new Paquete();
+			Comando p = new Comando();
 			p.setComando(Comando.DESCONECTAR);
 			p.setIp(cliente.getMiIp());
 			cliente.getSalida().writeObject(gson.toJson(p));
@@ -297,7 +297,7 @@ public class TestCliente {
 		pp.setRaza("Asesino");
 		pp.setSaludTope(10000);
 
-		Queue<Paquete> cola = new LinkedList<Paquete>();
+		Queue<Comando> cola = new LinkedList<Comando>();
 		cola.add(pp);
 		cola.add(pp);
 		this.server(cola);
@@ -313,7 +313,7 @@ public class TestCliente {
 					.fromJson((String) cliente.getEntrada().readObject(), PaquetePersonaje.class);
 
 			// Cierro las conexiones
-			Paquete p = new Paquete();
+			Comando p = new Comando();
 			p.setComando(Comando.DESCONECTAR);
 			p.setIp(cliente.getMiIp());
 			cliente.getSalida().writeObject(gson.toJson(p));

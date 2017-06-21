@@ -1,29 +1,23 @@
 package mensajeria;
 
-import java.io.Serializable;
-
-public class PaqueteMovimiento extends Paquete implements Serializable, Cloneable {
-
+public class PaqueteMovimiento {
 	private int id;
 	private float posX;
 	private float posY;
 	private int direccion;
 	private int frame;
-
+	
 	public PaqueteMovimiento() {
-		setComando(Comando.MOVIMIENTO);
 	}
-
+	
 	public PaqueteMovimiento(int idPersonaje) {
-		id = idPersonaje;
-		setComando(Comando.MOVIMIENTO);
+		id = idPersonaje;		
 	}
 	
 	public PaqueteMovimiento(int idPersonaje, float posX, float posY) {
 		this.id = idPersonaje;
 		this.posX = posX;
-		this.posY = posY;
-		setComando(Comando.MOVIMIENTO);
+		this.posY = posY;	
 	}
 
 	public int getIdPersonaje() {
@@ -68,8 +62,11 @@ public class PaqueteMovimiento extends Paquete implements Serializable, Cloneabl
 
 	public Object clone() {
 		Object obj = null;
-		obj = super.clone();
+		try {
+			obj = super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
 		return obj;
 	}
 }
-

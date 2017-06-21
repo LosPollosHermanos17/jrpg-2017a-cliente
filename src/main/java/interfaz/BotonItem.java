@@ -15,7 +15,7 @@ import javax.swing.JPopupMenu;
 import dominio.Item;
 import estados.Estado;
 import mensajeria.Comando;
-import mensajeria.PaqueteMovimiento;
+import mensajeria.ComandoMovimiento;
 import mensajeria.PaquetePersonaje;
 import recursos.Recursos;
 

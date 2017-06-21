@@ -1,17 +1,55 @@
 package mensajeria;
 
-public class Comando {
+import java.io.Serializable;
+
+public abstract class Comando implements Serializable, Cloneable {
 	
-	public static final int ACTUALIZARPERSONAJE = 11;
-	public static final int ATACAR = 9;
-	public static final int BATALLA = 8;
-	public static final int CONEXION = 0;
-	public static final int CREACIONPJ = 1;
-	public static final int DESCONECTAR = 2;
-	public static final int FINALIZARBATALLA = 10; 
-	public static final int INICIOSESION = 3;
-	public static final int MOSTRARMAPAS = 4;
-	public static final int MOVIMIENTO = 5;
-	public static final int REGISTRO = 6;
-	public static final int SALIR = 7;
+	public static String msjExito = "1";
+	public static String msjFracaso = "0";
+	
+	private String mensaje;
+	private String ip;
+
+	public Comando() {
+		
+	}
+	
+	public Comando(String mensaje, String nick, String ip, int comando) {
+		this.mensaje = mensaje;
+		this.ip = ip;	
+	}
+	
+	public Comando(String mensaje, int comando) {
+		this.mensaje = mensaje;	
+	}
+
+	public void setMensaje(String mensaje) {
+		this.mensaje = mensaje;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public String getMensaje() {
+		return mensaje;
+	}
+
+
+	public String getIp() {
+		return ip;
+	}
+	
+	public abstract void resolver(Object argumento);
+	
+	public Object clone() {
+		Object obj = null;
+		try {
+			obj = super.clone();
+		} catch (CloneNotSupportedException ex) {
+			ex.printStackTrace();
+		}
+		return obj;
+	}
+
 }

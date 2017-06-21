@@ -10,261 +10,179 @@ import java.util.Scanner;
 import javax.swing.JOptionPane;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 
 import frames.*;
 import juego.Juego;
+import mensajeria.AdaptadorComando;
 import mensajeria.Comando;
-import mensajeria.Paquete;
+import mensajeria.ComandoMostrarMapa;
 import mensajeria.PaquetePersonaje;
 import mensajeria.PaqueteUsuario;
 
 public class Cliente extends Thread {
-	
-	private Socket cliente;
+
+	private Socket socket;
 	private String miIp;
 	private ObjectInputStream entrada;
 	private ObjectOutputStream salida;
-	
-	// Objeto gson
-	private final Gson gson = new Gson();
-	
-	// Paquete usuario y paquete personaje
+
+	private Gson gson;
+
 	private PaqueteUsuario paqueteUsuario;
 	private PaquetePersonaje paquetePersonaje;
-	
-	// Acciones que realiza el usuario
-	private int accion;
-	
-	// Ip y puerto
-	private String ip;
-	private int puerto;
 
-	public int getAccion() {
-		return accion;
-	}
+	private Comando comando;
 
-	public void setAccion(int accion) {
-		this.accion = accion;
-	}
-	
 	private Juego wome;
 	private MenuCarga menuCarga;
 
 	public Cliente() {
-		
-		Scanner sc;
-		
 		try {
-			sc = new Scanner(new File("config.txt"));
-			ip = sc.nextLine();
-			puerto = sc.nextInt();
+			Scanner sc = new Scanner(new File("config.txt"));
+			socket = new Socket(sc.nextLine(), sc.nextInt());
+			miIp = socket.getInetAddress().getHostAddress();
 			sc.close();
+
+			entrada = new ObjectInputStream(socket.getInputStream());
+			salida = new ObjectOutputStream(socket.getOutputStream());
+
+			GsonBuilder gsonBilder = new GsonBuilder().registerTypeAdapter(Comando.class, new AdaptadorComando());
+			this.gson = gsonBilder.create();
+
 		} catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(null, "No se ha encontrado el archivo de configuración config.txt");
+			JOptionPane.showMessageDialog(null, "No se ha encontrado el archivo de configuraciÃ³n config.txt");
 			e.printStackTrace();
-		}
-		
-		try {
-			cliente = new Socket(ip, puerto);
-			miIp = cliente.getInetAddress().getHostAddress();
-			entrada = new ObjectInputStream(cliente.getInputStream());
-			salida = new ObjectOutputStream(cliente.getOutputStream());
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Fallo al iniciar la aplicación. Revise la conexión con el servidor.");
 			System.exit(1);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Fallo al iniciar la aplicaciÃ³n. Revise la conexiÃ³n con el servidor.");
 			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 
 	public void run() {
-		synchronized(this){
+		synchronized (this) {
 			try {
-				
+
 				// Creo el paquete que le voy a enviar al servidor
 				paqueteUsuario = new PaqueteUsuario();
 
 				while (!paqueteUsuario.isInicioSesion()) {
-					
-					// Muestro el menú principal
+
+					// Muestro el menÃº principal
 					new MenuJugar(this).setVisible(true);
-					
+
 					// Creo los paquetes que le voy a enviar al servidor
 					paqueteUsuario = new PaqueteUsuario();
 					paquetePersonaje = new PaquetePersonaje();
-					
-					// Espero a que el usuario seleccione alguna accion
+
+					// Espero a que el usuario seleccione algun comando
 					wait();
-	
-					switch (getAccion()) {
-					
-					case Comando.REGISTRO:
-						paqueteUsuario.setComando(Comando.REGISTRO);
-						break;
-					case Comando.INICIOSESION:
-						paqueteUsuario.setComando(Comando.INICIOSESION);
-						break;
-					case Comando.SALIR:
-						paqueteUsuario.setIp(getMiIp());
-						paqueteUsuario.setComando(Comando.SALIR);
-						break;
-					}
-	
-					// Le envio el paquete al servidor
-					salida.writeObject(gson.toJson(paqueteUsuario));
-	
-					// Recibo el paquete desde el servidor
-					String cadenaLeida = (String) entrada.readObject();
-					Paquete paquete = gson.fromJson(cadenaLeida, Paquete.class);
-				
-					switch (paquete.getComando()) {
-					
-					case Comando.REGISTRO:
-						if (paquete.getMensaje().equals(Paquete.msjExito)) {
 
-							// Abro el menu para la creación del personaje
-							MenuCreacionPj menuCreacionPJ = new MenuCreacionPj(this, paquetePersonaje);
-							menuCreacionPJ.setVisible(true);
-							
-							// Espero a que el usuario cree el personaje
-							wait();
-							
-							// Le envio los datos al servidor
-							paquetePersonaje.setComando(Comando.CREACIONPJ);
-							salida.writeObject(gson.toJson(paquetePersonaje));									
-							JOptionPane.showMessageDialog(null, "Registro exitoso.");
-							
-							// Recibo el paquete personaje con los datos (la id incluida)
-							paquetePersonaje = (PaquetePersonaje) gson.fromJson((String) entrada.readObject(), PaquetePersonaje.class);
+					// Cargo la ip
+					this.comando.setIp(getMiIp());
 
-							// Indico que el usuario ya inicio sesion
-							paqueteUsuario.setInicioSesion(true);
-							
-						} else {
-							if (paquete.getMensaje().equals(Paquete.msjFracaso))
-								JOptionPane.showMessageDialog(null, "No se pudo registrar.");
+					// Le envio el comando al servidor
+					this.enviarComando(this.comando);
 
-							// El usuario no pudo iniciar sesión
-							paqueteUsuario.setInicioSesion(false);
-						}
-						break;
-	
-					case Comando.INICIOSESION:
-						if (paquete.getMensaje().equals(Paquete.msjExito)) {
-							
-							// El usuario ya inicio sesión
-							paqueteUsuario.setInicioSesion(true);
-							
-							// Recibo el paquete personaje con los datos
-							paquetePersonaje = (PaquetePersonaje) gson.fromJson(cadenaLeida, PaquetePersonaje.class);
+					// Recibo el comando desde el servidor
+					this.comando = this.recibirComando();
 
-						} else {
-							if (paquete.getMensaje().equals(Paquete.msjFracaso))
-								JOptionPane.showMessageDialog(null, "Error al iniciar sesión. Revise el usuario y la contraseña");
-	
-							// El usuario no pudo iniciar sesión
-							paqueteUsuario.setInicioSesion(false);
-						}
-						break;
-	
-					case Comando.SALIR:
-						// El usuario no pudo iniciar sesión
-						paqueteUsuario.setInicioSesion(false);
-						salida.writeObject(gson.toJson(new Paquete(Comando.DESCONECTAR), Paquete.class));
-						cliente.close();
-						break;
-	
-					default:
-						break;
-					}
-	
+					// Resuelvo el comando recibido
+					this.comando.resolver(this);
 				}
-				
-				// Creo un paquete con el comando mostrar mapas
-				paquetePersonaje.setComando(Comando.MOSTRARMAPAS);
-				
+
 				// Abro el menu de eleccion del mapa
 				MenuMapas menuElegirMapa = new MenuMapas(this);
 				menuElegirMapa.setVisible(true);
-				
+
 				// Espero a que el usuario elija el mapa
 				wait();
-				
+
 				// Establezco el mapa en el paquete personaje
-				paquetePersonaje.setIp(miIp);
-				
+				Comando comando = new ComandoMostrarMapa(this.paquetePersonaje);
+				comando.setIp(miIp);
 				// Le envio el paquete con el mapa seleccionado
-				salida.writeObject(gson.toJson(paquetePersonaje));
-	
+				this.enviarComando(comando);
+
 				// Instancio el juego y cargo los recursos
 				wome = new Juego("World Of the Middle Earth", 800, 600, this, paquetePersonaje);
-				
+
 				// Muestro el menu de carga
 				menuCarga = new MenuCarga(this);
 				menuCarga.setVisible(true);
-				
+
 				// Espero que se carguen todos los recursos
 				wait();
-				
+
 				// Inicio el juego
 				wome.start();
-				
+
 				// Finalizo el menu de carga
 				menuCarga.dispose();
-	
+
 			} catch (IOException | InterruptedException | ClassNotFoundException e) {
-				JOptionPane.showMessageDialog(null, "Fallo la conexión con el servidor durante el inicio de sesión.");
+				JOptionPane.showMessageDialog(null, "Fallo la conexiï¿½n con el servidor durante el inicio de sesiï¿½n.");
 				System.exit(1);
 				e.printStackTrace();
 			}
 		}
 
 	}
-	
-	public Socket getSocket() {
-		return cliente;
+
+	public void setComando(Comando comando) {
+		this.comando = comando;
 	}
 
-	public void setSocket(Socket cliente) {
-		this.cliente = cliente;
+	public void cerrarConexiones() {
+		try {
+			this.entrada.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			this.salida.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			this.socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public String getMiIp() {
 		return miIp;
 	}
 
-	public void setMiIp(String miIp) {
-		this.miIp = miIp;
-	}
-
-	public ObjectInputStream getEntrada() {
-		return entrada;
-	}
-
-	public void setEntrada(ObjectInputStream entrada) {
-		this.entrada = entrada;
-	}
-
-	public ObjectOutputStream getSalida() {
-		return salida;
-	}
-
-	public void setSalida(ObjectOutputStream salida) {
-		this.salida = salida;
-	}
-	
-	public PaqueteUsuario getPaqueteUsuario(){
+	public PaqueteUsuario getPaqueteUsuario() {
 		return paqueteUsuario;
 	}
-	
-	public PaquetePersonaje getPaquetePersonaje(){
+
+	public PaquetePersonaje getPaquetePersonaje() {
 		return paquetePersonaje;
 	}
-	
-	public Juego getJuego(){
+
+	public void setPaquetePersonaje(PaquetePersonaje paquetePersonaje) {
+		this.paquetePersonaje = paquetePersonaje;
+	}
+
+	public Juego getJuego() {
 		return wome;
 	}
-	
+
 	public MenuCarga getMenuCarga() {
 		return menuCarga;
+	}
+
+	public void enviarComando(Comando comando) throws IOException {
+		this.salida.writeObject(gson.toJson(comando, Comando.class));
+	}
+
+	public Comando recibirComando() throws JsonSyntaxException, ClassNotFoundException, IOException {
+		return gson.fromJson((String) this.entrada.readObject(), Comando.class);
 	}
 }

@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import dominio.Inventario;
 import dominio.Item;
 
-public class PaqueteInventario extends Paquete implements Serializable, Cloneable {
+public class PaqueteInventario implements Serializable, Cloneable {
 
 	private int id;
 	private Map<Integer, PaqueteItem> items;
@@ -52,5 +52,15 @@ public class PaqueteInventario extends Paquete implements Serializable, Cloneabl
 				this.items.put(entry.getKey(), new PaqueteItem(entry.getValue()));
 			}
 		}
+	}
+	
+	public Object clone() {
+		Object obj = null;
+		try {
+			obj = super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		return obj;
 	}
 }

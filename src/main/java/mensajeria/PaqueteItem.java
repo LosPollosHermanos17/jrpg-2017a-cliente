@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import dominio.Item;
 
-public class PaqueteItem extends Paquete implements Serializable, Cloneable {
+public class PaqueteItem implements Serializable, Cloneable {
 
 	private int id;
 	private int idTipo;

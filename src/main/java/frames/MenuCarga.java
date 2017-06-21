@@ -7,6 +7,7 @@ import javax.swing.border.EmptyBorder;
 
 import cliente.*;
 import mensajeria.Comando;
+import mensajeria.ComandoSalir;
 
 import javax.swing.ImageIcon;
 
@@ -33,7 +34,7 @@ public class MenuCarga extends JFrame {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				synchronized(cliente){
-					cliente.setAccion(Comando.SALIR);
+					cliente.setComando(new ComandoSalir());
 					cliente.notify();
 				}
 				dispose();

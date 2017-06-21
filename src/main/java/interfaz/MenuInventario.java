@@ -12,12 +12,11 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.google.gson.Gson;
 
 import dominio.Inventario;
 import dominio.Item;
 import juego.Juego;
-import mensajeria.Comando;
+import mensajeria.ComandoActualizarPersonaje;
 import mensajeria.PaqueteItem;
 import mensajeria.PaquetePersonaje;
 import recursos.Recursos;
@@ -130,12 +129,10 @@ public class MenuInventario {
 
 		// Creo un item vacío para actualizar
 		paquetePersonaje.getPaqueteInventario().getItems().put(item.getIdTipo(), new PaqueteItem(-1));
-		paquetePersonaje.setComando(Comando.ACTUALIZARPERSONAJE);
 
 		// Envío a actualizar al servidor
 		try {
-			this.juego.getCliente().getSalida()
-					.writeObject(new Gson().toJson(paquetePersonaje, PaquetePersonaje.class));
+			this.juego.getCliente().enviarComando(new ComandoActualizarPersonaje(paquetePersonaje));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

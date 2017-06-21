@@ -5,7 +5,7 @@ import java.io.Serializable;
 import dominio.Personaje;
 import estados.Estado;
 
-public class PaquetePersonaje extends Paquete implements Serializable, Cloneable {
+public class PaquetePersonaje implements Serializable, Cloneable {
 
 	private int id;
 	private int idMapa;
@@ -185,7 +185,11 @@ public class PaquetePersonaje extends Paquete implements Serializable, Cloneable
 
 	public Object clone() {
 		Object obj = null;
-		obj = super.clone();
+		try {
+			obj = super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
 		return obj;
 	}
 }

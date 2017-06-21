@@ -12,6 +12,7 @@ import javax.swing.border.EmptyBorder;
 
 import cliente.*;
 import mensajeria.Comando;
+import mensajeria.ComandoSalir;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -37,7 +38,7 @@ public class MenuJugar extends JFrame {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				synchronized(cliente){
-					cliente.setAccion(Comando.SALIR);
+					cliente.setComando(new ComandoSalir());
 					cliente.notify();
 				}
 				dispose();

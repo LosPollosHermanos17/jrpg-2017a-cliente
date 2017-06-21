@@ -6,6 +6,8 @@ import javax.swing.JFrame;
 
 import cliente.*;
 import mensajeria.Comando;
+import mensajeria.ComandoRegistro;
+import mensajeria.ComandoSalir;
 
 import javax.swing.JTextField;
 import java.awt.Font;
@@ -41,7 +43,7 @@ public class MenuRegistro extends JFrame {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				synchronized(cliente){
-					cliente.setAccion(Comando.SALIR);
+					cliente.setComando(new ComandoSalir());
 					cliente.notify();
 				}
 				dispose();
@@ -101,7 +103,7 @@ public class MenuRegistro extends JFrame {
 				synchronized(cliente){
 					cliente.getPaqueteUsuario().setUsername(txtUsuario.getText());
 					cliente.getPaqueteUsuario().setPassword(pwPassword.getText());
-					cliente.setAccion(Comando.REGISTRO);
+					cliente.setComando(new ComandoRegistro(cliente.getPaqueteUsuario()));
 					cliente.notify();
 				}
 				dispose();

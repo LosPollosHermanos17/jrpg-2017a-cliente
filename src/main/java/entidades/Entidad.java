@@ -10,11 +10,10 @@ import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
 
-import com.google.gson.Gson;
-
 import juego.Juego;
 import juego.Pantalla;
-import mensajeria.PaqueteBatalla;
+import mensajeria.ComandoBatalla;
+import mensajeria.ComandoMovimiento;
 import mensajeria.PaqueteMovimiento;
 import mundo.Grafo;
 import mundo.Mundo;
@@ -71,7 +70,6 @@ public class Entidad {
 	private final Animacion moverAbajo;
 	private final Animacion moverAbajoIzq;
 
-	private final Gson gson = new Gson();
 	private int intervaloEnvio = 0;
 
 	// pila de movimiento
@@ -149,30 +147,24 @@ public class Entidad {
 		// Tomo el click izquierdo
 		if (juego.getHandlerMouse().getNuevoClick()) {
 			if (juego.getEstadoJuego().getHaySolicitud()) {
-				
+
 				if (juego.getEstadoJuego().getMenuEnemigo().clickEnMenu(posMouse[0], posMouse[1])) {
 					if (juego.getEstadoJuego().getMenuEnemigo().clickEnBoton(posMouse[0], posMouse[1])) {
-						
+
 						// pregunto si el menu emergente es de tipo batalla
-						if(juego.getEstadoJuego().getTipoSolicitud() == MenuInfoPersonaje.menuBatallar){
-							PaqueteBatalla pBatalla = new PaqueteBatalla();
-
-							pBatalla.setId(juego.getPersonaje().getId());
-							pBatalla.setIdEnemigo(idEnemigo);
-
+						if (juego.getEstadoJuego().getTipoSolicitud() == MenuInfoPersonaje.menuBatallar) {
 							juego.getEstadoJuego().setHaySolicitud(false, null, 0);
-
 							try {
-								juego.getCliente().getSalida().writeObject(gson.toJson(pBatalla));
+								juego.getCliente()
+										.enviarComando(new ComandoBatalla(juego.getPersonaje().getId(), idEnemigo));
 							} catch (IOException e) {
-								JOptionPane.showMessageDialog(null, "Fallo la conexión con el servidor");
+								JOptionPane.showMessageDialog(null, "Fallo la conexiÃ³n con el servidor");
 								e.printStackTrace();
 							}
 						} else {
 							juego.getEstadoJuego().setHaySolicitud(false, null, 0);
 						}
-						
-						
+
 					} else if (juego.getEstadoJuego().getMenuEnemigo().clickEnCerrar(posMouse[0], posMouse[1])) {
 						juego.getEstadoJuego().setHaySolicitud(false, null, 0);
 					}
@@ -198,14 +190,14 @@ public class Entidad {
 						if (tileMoverme[0] == tilePersonajes[0] && tileMoverme[1] == tilePersonajes[1]) {
 							idEnemigo = actual.getIdPersonaje();
 							juego.getEstadoJuego().setHaySolicitud(true,
-									juego.getEscuchaMensajes().getPersonajesConectados().get(idEnemigo), MenuInfoPersonaje.menuBatallar);
+									juego.getEscuchaMensajes().getPersonajesConectados().get(idEnemigo),
+									MenuInfoPersonaje.menuBatallar);
 							juego.getHandlerMouse().setNuevoClick(false);
 						}
 					}
 				}
 			}
 		}
-	
 
 		if (juego.getHandlerMouse().getNuevoRecorrido() && !juego.getEstadoJuego().getHaySolicitud()) {
 
@@ -342,15 +334,15 @@ public class Entidad {
 	}
 
 	public void graficar(Graphics g) {
-	    drawX = (int) (x - juego.getCamara().getxOffset());
-	    drawY = (int) (y - juego.getCamara().getyOffset());
-	    g.drawImage(getFrameAnimacionActual(), drawX, drawY+4, ancho, alto, null);
+		drawX = (int) (x - juego.getCamara().getxOffset());
+		drawY = (int) (y - juego.getCamara().getyOffset());
+		g.drawImage(getFrameAnimacionActual(), drawX, drawY + 4, ancho, alto, null);
 	}
-	
-	public void graficarNombre(Graphics g){
+
+	public void graficarNombre(Graphics g) {
 		g.setColor(Color.WHITE);
 		g.setFont(new Font("Book Antiqua", Font.BOLD, 15));
-	    Pantalla.centerString(g, new java.awt.Rectangle(drawX + 32, drawY - 20, 0, 10), nombre);
+		Pantalla.centerString(g, new java.awt.Rectangle(drawX + 32, drawY - 20, 0, 10), nombre);
 	}
 
 	private BufferedImage getFrameAnimacionActual() {
@@ -407,10 +399,9 @@ public class Entidad {
 		juego.getUbicacionPersonaje().setDireccion(getDireccion());
 		juego.getUbicacionPersonaje().setFrame(getFrame());
 		try {
-			juego.getCliente().getSalida()
-					.writeObject(gson.toJson(juego.getUbicacionPersonaje(), PaqueteMovimiento.class));
+			juego.getCliente().enviarComando(new ComandoMovimiento(juego.getUbicacionPersonaje()));
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Fallo la conexión con el servidor.");
+			JOptionPane.showMessageDialog(null, "Fallo la conexiï¿½n con el servidor.");
 			e.printStackTrace();
 		}
 	}
