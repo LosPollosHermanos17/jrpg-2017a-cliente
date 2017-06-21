@@ -158,7 +158,7 @@ public class Entidad {
 								juego.getCliente()
 										.enviarComando(new ComandoBatalla(juego.getPersonaje().getId(), idEnemigo));
 							} catch (IOException e) {
-								JOptionPane.showMessageDialog(null, "Fallo la conexiÃ³n con el servidor");
+								JOptionPane.showMessageDialog(null, "Fallo la conexión con el servidor");
 								e.printStackTrace();
 							}
 						} else {
@@ -231,12 +231,30 @@ public class Entidad {
 
 			if (tileMoverme[0] == tileActual[0] && tileMoverme[1] == tileActual[1]
 					|| mundo.getTile(tileMoverme[0], tileMoverme[1]).esSolido()) {
+				
+				// Antes de salir del metodo, determino de esta manera si se clickeo sobre el techo
+				// de alguno de los mercados que se encuentran en el mapa
+				if ( mundo.getTiles()[tileMoverme[0]][tileMoverme[1]] == 4  || // espacio vacio
+					 mundo.getTiles()[tileMoverme[0]][tileMoverme[1]] == 14 || // tejas perspectiva 1
+					 mundo.getTiles()[tileMoverme[0]][tileMoverme[1]] == 15 || // tejas	perspectiva 2
+					 mundo.getTiles()[tileMoverme[0]][tileMoverme[1]] == 30 || // angulo de tejas
+					 mundo.getTiles()[tileMoverme[0]][tileMoverme[1]] == 32 || // angulo de pared
+					 mundo.getTiles()[tileMoverme[0]][tileMoverme[1]] == 41 || // pared perspectiva 1
+					 mundo.getTiles()[tileMoverme[0]][tileMoverme[1]] == 42 || // pared perspectiva 2
+					 mundo.getTiles()[tileMoverme[0]][tileMoverme[1]] == 44 || // entrada
+					 mundo.getTiles()[tileMoverme[0]][tileMoverme[1]] == 48 || // ventana
+					 mundo.getTiles()[tileMoverme[0]][tileMoverme[1]] == 66 )  // techo)     
+					 					
+					mundo.setClickEnMercado(true);
+				
 				tileMoverme = null;
 				enMovimiento = false;
 				juego.getHandlerMouse().setNuevoRecorrido(false);
-				pilaMovimiento = null;
+				pilaMovimiento = null;				
+				
 				return;
-			}
+			}			
+
 
 			if (pilaMovimiento == null)
 				pilaMovimiento = caminoMasCorto(tileActual[0], tileActual[1], tileMoverme[0], tileMoverme[1]);
