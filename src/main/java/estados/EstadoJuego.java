@@ -51,7 +51,7 @@ public class EstadoJuego extends Estado {
 		entidadPersonaje = new Entidad(juego, mundo, 64, 64, juego.getPersonaje().getNombre(), 0, 0, Recursos.personaje.get(juego.getPersonaje().getRaza()), 150);
 		miniaturaPersonaje = Recursos.personaje.get(paquetePersonaje.getRaza()).get(5)[0];
 		menuInventario = new MenuInventario(juego);
-		menuMercado = new MenuMercado(juego, menuInventario);
+		menuMercado = new MenuMercado(juego);
 
 		try {
 			// Le envio al servidor que me conecte al mapa y mi posicion
