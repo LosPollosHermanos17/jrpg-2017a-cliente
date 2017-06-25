@@ -1,5 +1,6 @@
 package testsCliente;
-
+import mensajeria.*;
+import mensajeria.ComandoInicioSesion;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -16,10 +17,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import cliente.Cliente;
-import mensajeria.Comando;
-import mensajeria.Comando;
-import mensajeria.PaquetePersonaje;
-import mensajeria.PaqueteUsuario;
 
 public class TestCliente {
 	private Thread t;
@@ -33,7 +30,7 @@ public class TestCliente {
 
 				try {
 					System.out.println("Creando Servidor");
-					ss = new ServerSocket(9999);
+					ss = new ServerSocket(9998);
 					System.out.println("Servidor Creado.");
 					System.out.println("Esperando clientes...");
 					Socket client = ss.accept();
@@ -78,24 +75,14 @@ public class TestCliente {
 	@Test
 	public void testConexionConElServidor() {
 		Queue<Comando> cola = new LinkedList<Comando>();
-		cola.add(new Comando());
+		PaqueteUsuario paqueteUsuario = new PaqueteUsuario();
+		Comando comando = new ComandoInicioSesion(paqueteUsuario);
+		comando.setMensaje("1");
+		cola.add(comando);
 		this.server(cola);
-
 		Cliente cliente = new Cliente();
 		Assert.assertEquals(1, 1);
-		try {
-			// Cierro las conexiones
-			Comando p = new Comando();
-			p.setComando(Comando.DESCONECTAR);
-			p.setIp(cliente.getMiIp());
-			cliente.getSalida().writeObject(gson.toJson(p));
-			cliente.getSalida().close();
-			cliente.getEntrada().close();
-			cliente.getSocket().close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		cliente.cerrarConexiones();
 		t.stop();
 	}
 
@@ -104,35 +91,25 @@ public class TestCliente {
 
 		// Registro el usuario
 		PaqueteUsuario pu = new PaqueteUsuario();
-		pu.setComando(Comando.REGISTRO);
 		pu.setUsername("nuevoUser");
 		pu.setPassword("test");
-		pu.setMensaje("1");
-
+		Comando comando = new ComandoRegistro(pu);
+		comando.setMensaje("1");
 		Queue<Comando> cola = new LinkedList<Comando>();
-		cola.add(pu);
-		cola.add(pu);
+		cola.add(comando);
 		this.server(cola);
 
 		// Inicio el Thread
 		Cliente cliente = new Cliente();
-
+		
 		try {
 
 			// Envio el paquete para registrarme
-			cliente.getSalida().writeObject(gson.toJson(pu));
-
+			cliente.enviarComando(comando);
 			// Recibo la respuesta del servidor
-			Comando resultado = (Comando) gson.fromJson((String) cliente.getEntrada().readObject(), Comando.class);
-
+			 Comando resultado = cliente.recibirComando();
 			// Cierro las conexiones
-			Comando p = new Comando();
-			p.setComando(Comando.DESCONECTAR);
-			p.setIp(cliente.getMiIp());
-			cliente.getSalida().writeObject(gson.toJson(p));
-			cliente.getSalida().close();
-			cliente.getEntrada().close();
-			cliente.getSocket().close();
+			cliente.cerrarConexiones();
 			Assert.assertEquals(Comando.msjExito, resultado.getMensaje());
 
 		} catch (JsonSyntaxException | ClassNotFoundException | IOException e) {
@@ -146,33 +123,26 @@ public class TestCliente {
 
 		// Registro el usuario
 		PaqueteUsuario pu = new PaqueteUsuario();
-		pu.setComando(Comando.REGISTRO);
 		pu.setUsername("nuevoUser");
 		pu.setPassword("test32");
-		pu.setMensaje("0");
+		
 
 		Queue<Comando> cola = new LinkedList<Comando>();
-		cola.add(pu);
-		cola.add(pu);
+		cola.add(new ComandoRegistro(pu));
+		cola.add(new ComandoRegistro(pu));
 		this.server(cola);
 
 		Cliente cliente = new Cliente();
-
+		Comando comando = new ComandoRegistro(pu);
+		comando.setMensaje("0");
 		try {
 
 			// Envio el paquete para registrarme
-			cliente.getSalida().writeObject(gson.toJson(pu));
+			cliente.enviarComando(comando);
 			// Recibo la respuesta del servidor
-			Comando resultado = (Comando) gson.fromJson((String) cliente.getEntrada().readObject(), Comando.class);
-
+			Comando resultado = cliente.recibirComando();
 			// Cierro las conexiones
-			Comando p = new Comando();
-			p.setComando(Comando.DESCONECTAR);
-			p.setIp(cliente.getMiIp());
-			cliente.getSalida().writeObject(gson.toJson(p));
-			cliente.getSalida().close();
-			cliente.getEntrada().close();
-			cliente.getSocket().close();
+			cliente.cerrarConexiones();
 			Assert.assertEquals(Comando.msjFracaso, resultado.getMensaje());
 
 		} catch (JsonSyntaxException | ClassNotFoundException | IOException e) {
@@ -186,13 +156,13 @@ public class TestCliente {
 
 		// Registro de usuario
 		PaqueteUsuario pu = new PaqueteUsuario();
-		pu.setComando(Comando.REGISTRO);
+		//pu.setComando(Comando.REGISTRO);
 		pu.setUsername("nuevoUser");
 		pu.setPassword("test");
 
 		// Registro de personaje
 		PaquetePersonaje pp = new PaquetePersonaje();
-		pp.setComando(Comando.CREACIONPJ);
+		//pp.setComando(Comando.CREACIONPJ);
 		pp.setCasta("Humano");
 		pp.setDestreza(1);
 		pp.setEnergiaTope(1);
@@ -205,34 +175,26 @@ public class TestCliente {
 		pp.setSaludTope(1);
 
 		Queue<Comando> cola = new LinkedList<Comando>();
-		cola.add(pu);
-		cola.add(pp);
-		cola.add(pp);
+		cola.add(new ComandoRegistro(pu));
+		cola.add(new ComandoCrearPersonaje(pp));
+		cola.add(new ComandoCrearPersonaje(pp));
 		this.server(cola);
 
 		Cliente cliente = new Cliente();
 		try {
 
 			// Envio el paquete de registro de usuario
-			cliente.getSalida().writeObject(gson.toJson(pu));
-
+			cliente.enviarComando(new ComandoRegistro(pu));
 			// Recibo la respuesta del servidor
-			Comando paqueteAux = (Comando) gson.fromJson((String) cliente.getEntrada().readObject(), Comando.class);
+			Comando paqueteAux = cliente.recibirComando();
 
 			// Envio el paquete de registro de personaje
-			cliente.getSalida().writeObject(gson.toJson(pp));
+			cliente.enviarComando(new ComandoCrearPersonaje(pp));
 			// Recibo el personaje de mi usuario
 
-			pp = (PaquetePersonaje) gson.fromJson((String) cliente.getEntrada().readObject(), PaquetePersonaje.class);
-
+			pp = ((ComandoCrearPersonaje)cliente.recibirComando()).getPaquetePersonaje();
 			// Cierro las conexiones
-			Comando p = new Comando();
-			p.setComando(Comando.DESCONECTAR);
-			p.setIp(cliente.getMiIp());
-			cliente.getSalida().writeObject(gson.toJson(p));
-			cliente.getSalida().close();
-			cliente.getEntrada().close();
-			cliente.getSocket().close();
+			cliente.cerrarConexiones();
 
 			Assert.assertEquals("PjTest", pp.getNombre());
 		} catch (IOException | JsonSyntaxException | ClassNotFoundException e) {
@@ -245,35 +207,29 @@ public class TestCliente {
 	public void testIniciarSesion() {
 
 		PaquetePersonaje paquete = new PaquetePersonaje();
+		
 		paquete.setNombre("PjTest");
 		Queue<Comando> cola = new LinkedList<Comando>();
-		cola.add(paquete);
-		cola.add(paquete);
+		ComandoInicioSesion comando = new ComandoInicioSesion();
+		comando.setPaquetePersonaje(paquete);
+		cola.add(comando);
 		this.server(cola);
 
 		Cliente cliente = new Cliente();
 
 		PaqueteUsuario pu = new PaqueteUsuario();
-		pu.setComando(Comando.INICIOSESION);
 		pu.setUsername("nuevoUser");
 		pu.setPassword("test");
+		comando.setPaqueteUsuario(pu);
 
 		try {
 			// Envio el paquete de incio de sesion
-			cliente.getSalida().writeObject(gson.toJson(pu));
-
+			cliente.enviarComando(comando);
 			// Recibo el paquete con el personaje
-			PaquetePersonaje paquetePersonaje = (PaquetePersonaje) gson
-					.fromJson((String) cliente.getEntrada().readObject(), PaquetePersonaje.class);
+			PaquetePersonaje paquetePersonaje = ((ComandoInicioSesion)cliente.recibirComando()).getPaquetePersonaje();
 
 			// Cierro las conexiones
-			Comando p = new Comando();
-			p.setComando(Comando.DESCONECTAR);
-			p.setIp(cliente.getMiIp());
-			cliente.getSalida().writeObject(gson.toJson(p));
-			cliente.getSalida().close();
-			cliente.getEntrada().close();
-			cliente.getSocket().close();
+			cliente.cerrarConexiones();
 			Assert.assertEquals("PjTest", paquetePersonaje.getNombre());
 		} catch (IOException | JsonSyntaxException | ClassNotFoundException e) {
 			e.printStackTrace();
@@ -285,7 +241,7 @@ public class TestCliente {
 	public void testActualizarPersonaje() {
 
 		PaquetePersonaje pp = new PaquetePersonaje();
-		pp.setComando(Comando.ACTUALIZARPERSONAJE);
+		ComandoActualizarPersonaje comando = new ComandoActualizarPersonaje();
 		pp.setCasta("Humano");
 		pp.setDestreza(1);
 		pp.setEnergiaTope(1);
@@ -296,30 +252,22 @@ public class TestCliente {
 		pp.setNombre("PjTest");
 		pp.setRaza("Asesino");
 		pp.setSaludTope(10000);
-
+		comando.setPaquetePersonaje(pp);
 		Queue<Comando> cola = new LinkedList<Comando>();
-		cola.add(pp);
-		cola.add(pp);
+		cola.add(comando);
 		this.server(cola);
 
 		Cliente cliente = new Cliente();
 		try {
 
 			// Envio el paquete de actualizacion de personaje
-			cliente.getSalida().writeObject(gson.toJson(pp));
+			cliente.enviarComando(comando);
 
 			// Recibo el paquete con el personaje actualizado
-			PaquetePersonaje paquetePersonaje = (PaquetePersonaje) gson
-					.fromJson((String) cliente.getEntrada().readObject(), PaquetePersonaje.class);
+			PaquetePersonaje paquetePersonaje = ((ComandoActualizarPersonaje)cliente.recibirComando()).getPaquetePersonaje();
 
 			// Cierro las conexiones
-			Comando p = new Comando();
-			p.setComando(Comando.DESCONECTAR);
-			p.setIp(cliente.getMiIp());
-			cliente.getSalida().writeObject(gson.toJson(p));
-			cliente.getSalida().close();
-			cliente.getEntrada().close();
-			cliente.getSocket().close();
+			cliente.cerrarConexiones();
 			Assert.assertEquals(10000, paquetePersonaje.getSaludTope());
 		} catch (IOException | JsonSyntaxException | ClassNotFoundException e) {
 			e.printStackTrace();
