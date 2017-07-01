@@ -9,7 +9,11 @@ public class ComandoInicioSesion extends Comando implements Serializable {
 
 	private PaqueteUsuario paqueteUsuario;
 	private PaquetePersonaje paquetePersonaje;
-
+	
+	public ComandoInicioSesion(){
+		
+	}
+	
 	public ComandoInicioSesion(PaqueteUsuario paqueteUsuario) {
 		this.paqueteUsuario = paqueteUsuario;
 	}
@@ -33,4 +37,17 @@ public class ComandoInicioSesion extends Comando implements Serializable {
 			cliente.getPaqueteUsuario().setInicioSesion(false);
 		}
 	}
+	
+	public void setPaquetePersonaje(PaquetePersonaje paquetepj){
+		this.paquetePersonaje=paquetepj;
+	}
+	
+	public void setPaqueteUsuario(PaqueteUsuario paqueteUsuario){
+		this.paqueteUsuario=paqueteUsuario;
+	}
+	
+	public PaquetePersonaje getPaquetePersonaje(){
+		return this.paquetePersonaje;
+	}
+	
 }

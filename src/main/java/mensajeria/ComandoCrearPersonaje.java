@@ -11,6 +11,10 @@ public class ComandoCrearPersonaje extends Comando implements Serializable {
 	public ComandoCrearPersonaje(PaquetePersonaje personaje) {
 		this.paquetePersonaje = personaje;
 	}
+	
+	public PaquetePersonaje getPaquetePersonaje(){
+		return paquetePersonaje;
+	}
 
 	@Override
 	public void resolver(Object argumento) {

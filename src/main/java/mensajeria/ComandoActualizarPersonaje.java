@@ -9,10 +9,6 @@ public class ComandoActualizarPersonaje extends Comando implements Serializable{
 
 	private PaquetePersonaje paquetePersonaje;
 
-	public  ComandoActualizarPersonaje(PaquetePersonaje paquetePersonaje) {
-		this.paquetePersonaje = paquetePersonaje;
-	}
-
 	@Override
 	public void resolver(Object argumento) {
 		EscuchaMensajes escuchaMensajes = (EscuchaMensajes)argumento;
@@ -24,4 +20,14 @@ public class ComandoActualizarPersonaje extends Comando implements Serializable{
 			juego.getEstadoJuego().actualizarPersonaje();
 		}
 	}
+
+	public PaquetePersonaje getPaquetePersonaje() {
+		return paquetePersonaje;
+	}
+
+	public void setPaquetePersonaje(PaquetePersonaje paquetePersonaje) {
+		this.paquetePersonaje = paquetePersonaje;
+	}
+	
+	
 }
