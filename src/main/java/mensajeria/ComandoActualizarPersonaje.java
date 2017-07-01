@@ -8,6 +8,10 @@ import juego.Juego;
 public class ComandoActualizarPersonaje extends Comando implements Serializable{
 
 	private PaquetePersonaje paquetePersonaje;
+	
+	public  ComandoActualizarPersonaje(PaquetePersonaje paquetePersonaje) { 
+		this.paquetePersonaje = paquetePersonaje; 
+	} 
 
 	@Override
 	public void resolver(Object argumento) {
