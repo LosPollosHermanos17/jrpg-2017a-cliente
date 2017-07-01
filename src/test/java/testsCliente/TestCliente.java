@@ -241,7 +241,7 @@ public class TestCliente {
 	public void testActualizarPersonaje() {
 
 		PaquetePersonaje pp = new PaquetePersonaje();
-		ComandoActualizarPersonaje comando = new ComandoActualizarPersonaje();
+		ComandoActualizarPersonaje comando = new ComandoActualizarPersonaje(pp);
 		pp.setCasta("Humano");
 		pp.setDestreza(1);
 		pp.setEnergiaTope(1);
