@@ -17,6 +17,7 @@ import com.google.gson.Gson;
 import dominio.Item;
 import juego.Juego;
 import mensajeria.Comando;
+import mensajeria.ComandoActualizarPersonaje;
 import mensajeria.PaquetePersonaje;
 
 public class BotonItemMercadoMiPersonaje extends JButton {
@@ -59,18 +60,16 @@ public class BotonItemMercadoMiPersonaje extends JButton {
 					// Obtengo Mi Personaje
 					PaquetePersonaje paquetePersonaje = juego.getPersonaje();
 					
-					// Seteo el comando para indicarle al servidor que se actualice
-					paquetePersonaje.setComando(Comando.ACTUALIZARPERSONAJE);
-
-					// Envío a actualizar al servidor
-					try 
-					{
-						juego.getCliente().getSalida().writeObject(new Gson().toJson(paquetePersonaje, PaquetePersonaje.class));
-					} 
-					catch (IOException ioe) 
-					{
+					// Envio el comando para indicarle al servidor que actualice mi personaje en los demas clientes
+					try {
+						
+						juego.getCliente().enviarComando(new ComandoActualizarPersonaje(juego.getPersonaje()));
+						
+					} catch (IOException ioe) {
+						
 						ioe.printStackTrace();
 					}
+					
 				}
 			}
 		
@@ -92,17 +91,14 @@ public class BotonItemMercadoMiPersonaje extends JButton {
 										
 					// Obtengo Mi Personaje
 					PaquetePersonaje paquetePersonaje = juego.getPersonaje();
-					
-					// Seteo el comando para indicarle al servidor que se actualice
-					paquetePersonaje.setComando(Comando.ACTUALIZARPERSONAJE);
-
-					// Envío a actualizar al servidor
-					try 
-					{
-						juego.getCliente().getSalida().writeObject(new Gson().toJson(paquetePersonaje, PaquetePersonaje.class));
-					} 
-					catch (IOException ioe) 
-					{
+										
+					// Envio el comando para indicarle al servidor que actualice mi personaje en los demas clientes
+					try {
+						
+						juego.getCliente().enviarComando(new ComandoActualizarPersonaje(juego.getPersonaje()));
+						
+					} catch (IOException ioe) {
+						
 						ioe.printStackTrace();
 					}
 				}
