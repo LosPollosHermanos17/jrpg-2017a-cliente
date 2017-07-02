@@ -31,8 +31,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import interfaz.BotonItemMercadoMiPersonaje;
+import interfaz.BotonItemMercadoOtroPersonaje;
 import juego.Juego;
 import mensajeria.ComandoActualizarPersonaje;
+import mensajeria.ComandoIngresarMercado;
 import mensajeria.ComandoObtenerPersonajeActualizado;
 import mensajeria.PaqueteItem;
 import mensajeria.PaquetePersonaje;
@@ -75,7 +77,7 @@ public class MenuMercado {
 	private JPanel panelItemsOtroPersonaje;
 	private JLabel tituloPanelItemsOtroPersonaje;
 	private JPanel grillaItemsOtroPersonaje;	
-	private ArrayList<JButton> slotsItemsOtroPersonaje;
+	private ArrayList<BotonItemMercadoOtroPersonaje> slotsItemsOtroPersonaje;
 	private JScrollPane scrollPanelItemsOtroPersonaje;
 	
 	private JPanel panelItemsMiPersonaje;
@@ -126,7 +128,7 @@ public class MenuMercado {
 					}
 					
 					Map<Integer, PaqueteItem> itemsPersonaje = personajeSeleccionado.getPaqueteInventario().getItems();
-					int cantItemsEnGrilla = 0;
+					int cantItemsEnGrillaOtroPersonaje = 0;
 					
 					// Saco de la grilla de Otro Personaje los items y los tooltip del otro jugador
 					for (JButton slotItem : slotsItemsOtroPersonaje) {			
@@ -145,9 +147,10 @@ public class MenuMercado {
 							if (item.getEstaOfertado() == true) {
 								
 								String descripcion = obtenerDescripcionItem(item);
-								slotsItemsOtroPersonaje.get(cantItemsEnGrilla).setIcon(new ImageIcon(Recursos.items.get(item.getNombre())));
-								slotsItemsOtroPersonaje.get(cantItemsEnGrilla).setToolTipText(descripcion);
-								cantItemsEnGrilla++;
+								slotsItemsOtroPersonaje.get(cantItemsEnGrillaOtroPersonaje).setItem(item);
+								slotsItemsOtroPersonaje.get(cantItemsEnGrillaOtroPersonaje).setIcon(new ImageIcon(Recursos.items.get(item.getNombre())));
+								slotsItemsOtroPersonaje.get(cantItemsEnGrillaOtroPersonaje).setToolTipText(descripcion);
+								cantItemsEnGrillaOtroPersonaje++;
 								
 							}
 							
@@ -193,9 +196,9 @@ public class MenuMercado {
 		
 		grillaItemsOtroPersonaje = new JPanel(new GridLayout(CANT_FILAS_GRILLA_ITEMS, CANT_COLUMNAS_GRILLA_ITEMS));
 				
-		slotsItemsOtroPersonaje = new ArrayList<JButton>(); 		
+		slotsItemsOtroPersonaje = new ArrayList<BotonItemMercadoOtroPersonaje>(); 		
 		for (int i = 0 ; i < CANT_FILAS_GRILLA_ITEMS * CANT_COLUMNAS_GRILLA_ITEMS ; i++) {			
-			JButton itemDisplay = new JButton();
+			BotonItemMercadoOtroPersonaje itemDisplay = new BotonItemMercadoOtroPersonaje(juego, ventanaMercado);
 			slotsItemsOtroPersonaje.add(itemDisplay); 
 			grillaItemsOtroPersonaje.add(itemDisplay);			
 		}
@@ -292,21 +295,7 @@ public class MenuMercado {
 	
 	public void mostrar(Juego juego) {
 		
-		// Indico que mi personaje se encuentra en el mercado
-		PaquetePersonaje personaje = juego.getPersonaje();
-		personaje.setComerciando(true);
-		
-		// Envío a actualizar al servidor
-		try {
-			this.juego.getCliente().enviarComando(new ComandoActualizarPersonaje(personaje));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
 		Map<Integer, PaquetePersonaje> personajesConectados;
-		
-		juego.getPantalla().getFrame().setVisible(false); // oculto la ventana principal del juego
-		ventanaMercado.setVisible(true); // muestro la ventana correspondiente al mercado
 		
 		// saco de la lista los nombres de los personajes que hayan quedado de antes
 		((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).clear();
@@ -323,18 +312,14 @@ public class MenuMercado {
 			slotItem.setToolTipText(null);
 		}
 		
-		// obtengo los personajes conectados
-		personajesConectados = juego.getEscuchaMensajes().getPersonajesConectados();
+		juego.getPantalla().getFrame().setVisible(false); // oculto la ventana principal del juego
+		ventanaMercado.setVisible(true); // muestro la ventana correspondiente al mercado
 		
-		// recorro todo el map que contiene los jugadores conectados para agregar los nombres a la lista
-		for (Entry<Integer, PaquetePersonaje> entry : personajesConectados.entrySet()) {
-			
-			PaquetePersonaje miPersonaje = juego.getPersonaje();
-			PaquetePersonaje otroPersonaje = entry.getValue();
-			
-			if (  miPersonaje.getId() != otroPersonaje.getId() && otroPersonaje.getComerciando() == true)
-				((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).addElement(otroPersonaje);
-						
+		// Envío comando indicando que ingrese al mercado
+		try {
+			this.juego.getCliente().enviarComando(new ComandoIngresarMercado(juego.getPersonaje().getId()));
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		
 		// muestro mis items
@@ -401,6 +386,6 @@ public class MenuMercado {
 		// Si estoy mostrando la vista de mercado
 		if(this.ventanaMercado.isVisible())
 			// quito el personaje
-			((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).addElement(personaje);	
+			((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).removeElement(personaje);	
 	}
 }

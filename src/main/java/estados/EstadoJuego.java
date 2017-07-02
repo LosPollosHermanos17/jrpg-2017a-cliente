@@ -186,5 +186,4 @@ public class EstadoJuego extends Estado {
 	{
 		return this.menuMercado;
 	}
-	}
 }
