@@ -20,6 +20,8 @@ public class PaqueteItem implements Serializable, Cloneable {
 	private int destrezaRequerida;
 	private int inteligenciaRequerida;
 	
+	private boolean estaOfertado;
+	
 	public PaqueteItem() {
 	}
 	
@@ -143,4 +145,14 @@ public class PaqueteItem implements Serializable, Cloneable {
 				this.getBonoDefensa(), this.getBonoMagia(), this.getBonoSalud(), this.getBonoEnergia(),
 				this.getFuerzaRequerida(), this.getDestrezaRequerida(), this.getInteligenciaRequerida());
 	}
+
+	public boolean getEstaOfertado() {
+		return estaOfertado;
+	}
+
+	public void setEstaOfertado(boolean estaOfertado) {
+		this.estaOfertado = estaOfertado;
+	}
+	
+	
 }
