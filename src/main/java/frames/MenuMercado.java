@@ -271,7 +271,7 @@ public class MenuMercado {
 					
 					// Indico que mi personaje ya no se encuentra en el mercado
 					PaquetePersonaje personaje = juego.getPersonaje();
-					personaje.setSeEncuentraEnMercado(false);
+					personaje.setComerciando(false);
 					
 					// Envío a actualizar al servidor
 					try {
@@ -294,7 +294,7 @@ public class MenuMercado {
 		
 		// Indico que mi personaje se encuentra en el mercado
 		PaquetePersonaje personaje = juego.getPersonaje();
-		personaje.setSeEncuentraEnMercado(true);
+		personaje.setComerciando(true);
 		
 		// Envío a actualizar al servidor
 		try {
@@ -332,7 +332,7 @@ public class MenuMercado {
 			PaquetePersonaje miPersonaje = juego.getPersonaje();
 			PaquetePersonaje otroPersonaje = entry.getValue();
 			
-			if (  miPersonaje.getId() != otroPersonaje.getId() && otroPersonaje.getSeEncuentraEnMercado() == true)
+			if (  miPersonaje.getId() != otroPersonaje.getId() && otroPersonaje.getComerciando() == true)
 				((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).addElement(otroPersonaje);
 						
 		}
@@ -388,5 +388,19 @@ public class MenuMercado {
 		
 	}
 	
-
+	public void añadirPersonaje(PaquetePersonaje personaje)
+	{
+		// Si estoy mostrando la vista de mercado
+		if(this.ventanaMercado.isVisible())		
+			// quito el personaje
+			((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).addElement(personaje);	
+	}
+	
+	public void quitarPersonaje(PaquetePersonaje personaje)
+	{
+		// Si estoy mostrando la vista de mercado
+		if(this.ventanaMercado.isVisible())
+			// quito el personaje
+			((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).addElement(personaje);	
+	}
 }

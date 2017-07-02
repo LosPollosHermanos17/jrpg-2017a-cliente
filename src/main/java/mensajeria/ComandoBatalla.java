@@ -43,5 +43,6 @@ public class ComandoBatalla extends Comando implements Serializable, Cloneable {
 		Estado.setEstado(null);
 		juego.setEstadoBatalla(new EstadoBatalla(juego, this));
 		Estado.setEstado(juego.getEstadoBatalla());
+		
 	}
 }

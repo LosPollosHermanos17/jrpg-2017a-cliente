@@ -125,7 +125,8 @@ public class EstadoJuego extends Estado {
 				key = (int) it.next();
 				actual = ubicacionPersonajes.get(key);
 				if (actual != null && actual.getIdPersonaje() != juego.getPersonaje().getId()
-						&& personajesConectados.get(actual.getIdPersonaje()).getEstado() == Estado.estadoJuego) {
+						&& personajesConectados.get(actual.getIdPersonaje()).getEstado() == Estado.estadoJuego 
+						&& !personajesConectados.get(actual.getIdPersonaje()).getComerciando()) {
 					Pantalla.centerString(g,
 							new Rectangle((int) (actual.getPosX() - juego.getCamara().getxOffset() + 32),
 									(int) (actual.getPosY() - juego.getCamara().getyOffset() - 20), 0, 10),
@@ -179,5 +180,11 @@ public class EstadoJuego extends Estado {
 
 	public int getTipoSolicitud() {
 		return tipoSolicitud;
+	}
+	
+	public MenuMercado getMenuMercado()
+	{
+		return this.menuMercado;
+	}
 	}
 }

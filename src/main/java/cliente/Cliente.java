@@ -78,7 +78,7 @@ public class Cliente extends Thread {
 					paqueteUsuario = new PaqueteUsuario();
 					paquetePersonaje = new PaquetePersonaje();
 
-					// Espero a que el usuario seleccione algun comando
+					// Espero a que el usuario seleccione algun comando ( Registrarse o Loguearse)
 					wait();
 
 					// Cargo la ip
