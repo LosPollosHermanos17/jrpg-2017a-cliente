@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,14 +30,15 @@ import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import dominio.Item;
 import interfaz.BotonItemMercadoMiPersonaje;
 import juego.Juego;
+import mensajeria.ComandoActualizarPersonaje;
+import mensajeria.ComandoObtenerPersonajeActualizado;
 import mensajeria.PaqueteItem;
 import mensajeria.PaquetePersonaje;
 import recursos.Recursos;
 
-public class MenuMercado implements ListSelectionListener {
+public class MenuMercado {
 	
 	private final int VENTANA_ANCHO = 800;
 	private final int VENTANA_ALTO = 600;
@@ -103,6 +105,62 @@ public class MenuMercado implements ListSelectionListener {
 				}
 				return renderer;
 			}
+		});
+		listaUsuarios.addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				
+				PaquetePersonaje personajeSeleccionado = listaUsuarios.getSelectedValue();
+								
+				// Solo realizo los siguientes pasos si la opcion seleccionada corresponde a un Personaje
+				if (personajeSeleccionado != null) {
+					
+					try {
+						
+						juego.getCliente().enviarComando(new ComandoObtenerPersonajeActualizado(personajeSeleccionado));
+						
+					} catch (IOException e1) {
+						
+						e1.printStackTrace();
+					}
+					
+					Map<Integer, PaqueteItem> itemsPersonaje = personajeSeleccionado.getPaqueteInventario().getItems();
+					int cantItemsEnGrilla = 0;
+					
+					// Saco de la grilla de Otro Personaje los items y los tooltip del otro jugador
+					for (JButton slotItem : slotsItemsOtroPersonaje) {			
+						slotItem.setIcon(null);
+						slotItem.setToolTipText(null);
+					}
+						
+					// Muestro los items del jugador seleccionado en la grilla
+					for (Entry<Integer, PaqueteItem> entry : itemsPersonaje.entrySet()) {
+						
+						PaqueteItem item = entry.getValue();
+						
+						if (item != null && item.getId() > 0) {
+							
+							// Si el item esta ofertado...
+							if (item.getEstaOfertado() == true) {
+								
+								String descripcion = obtenerDescripcionItem(item);
+								slotsItemsOtroPersonaje.get(cantItemsEnGrilla).setIcon(new ImageIcon(Recursos.items.get(item.getNombre())));
+								slotsItemsOtroPersonaje.get(cantItemsEnGrilla).setToolTipText(descripcion);
+								cantItemsEnGrilla++;
+								
+							}
+							
+						}
+						
+					}
+				
+					ventanaMercado.revalidate(); // Esto es para refrescar las imagenes
+					
+				}
+				
+			}
+			
 		});
 		
 		tituloPanelUsuarios = new JLabel("Jugadores");
@@ -210,6 +268,18 @@ public class MenuMercado implements ListSelectionListener {
 				if (opcionSeleccionada == JOptionPane.YES_OPTION) {				
 					ventanaMercado.setVisible(false); // oculto la ventana del mercado
 					juego.getPantalla().getFrame().setVisible(true); // vuelvo a mostrar la ventana principal del juego
+					
+					// Indico que mi personaje ya no se encuentra en el mercado
+					PaquetePersonaje personaje = juego.getPersonaje();
+					personaje.setSeEncuentraEnMercado(false);
+					
+					// Envío a actualizar al servidor
+					try {
+						juego.getCliente().enviarComando(new ComandoActualizarPersonaje(personaje));
+					} catch (IOException ioe) {
+						ioe.printStackTrace();
+					}
+					
 				}
 								
 			}
@@ -221,6 +291,17 @@ public class MenuMercado implements ListSelectionListener {
 	}
 	
 	public void mostrar(Juego juego) {
+		
+		// Indico que mi personaje se encuentra en el mercado
+		PaquetePersonaje personaje = juego.getPersonaje();
+		personaje.setSeEncuentraEnMercado(true);
+		
+		// Envío a actualizar al servidor
+		try {
+			this.juego.getCliente().enviarComando(new ComandoActualizarPersonaje(personaje));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		Map<Integer, PaquetePersonaje> personajesConectados;
 		
@@ -251,7 +332,7 @@ public class MenuMercado implements ListSelectionListener {
 			PaquetePersonaje miPersonaje = juego.getPersonaje();
 			PaquetePersonaje otroPersonaje = entry.getValue();
 			
-			if (  miPersonaje.getId() != otroPersonaje.getId() )
+			if (  miPersonaje.getId() != otroPersonaje.getId() && otroPersonaje.getSeEncuentraEnMercado() == true)
 				((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).addElement(otroPersonaje);
 						
 		}
@@ -262,7 +343,7 @@ public class MenuMercado implements ListSelectionListener {
 		
 		for (Entry<Integer, PaqueteItem> entry : itemsMiPersonaje.entrySet()) {
 			
-			Item item = entry.getValue().getItem();
+			PaqueteItem item = entry.getValue();
 			
 			if (item != null && item.getId() > 0) {
 
@@ -277,53 +358,9 @@ public class MenuMercado implements ListSelectionListener {
 		}		
 
 	}
-
-	@Override
-	public void valueChanged(ListSelectionEvent e) {
-		
-		PaquetePersonaje personaje = listaUsuarios.getSelectedValue();
-		
-		// Solo realizo los siguientes pasos si la opcion seleccionada corresponde a un Personaje
-		if (personaje != null) {
-			
-			Map<Integer, PaqueteItem> itemsPersonaje = personaje.getPaqueteInventario().getItems();
-			int cantItemsEnGrilla = 0;
-			
-			// Saco de la grilla de Otro Personaje los items y los tooltip del otro jugador
-			for (JButton slotItem : slotsItemsOtroPersonaje) {			
-				slotItem.setIcon(null);
-				slotItem.setToolTipText(null);
-			}
-				
-			// Muestro los items del jugador seleccionado en la grilla
-			for (Entry<Integer, PaqueteItem> entry : itemsPersonaje.entrySet()) {
-				
-				Item item = entry.getValue().getItem();
-				
-				if (item != null && item.getId() > 0) {
-					
-					// Si el item esta ofertado...
-					if (item.isOfertado()) {
-						
-						String descripcion = obtenerDescripcionItem(item);
-						slotsItemsOtroPersonaje.get(cantItemsEnGrilla).setIcon(new ImageIcon(Recursos.items.get(item.getNombre())));
-						slotsItemsOtroPersonaje.get(cantItemsEnGrilla).setToolTipText(descripcion);
-						cantItemsEnGrilla++;
-						
-					}
-					
-				}
-				
-			}
-		
-			ventanaMercado.revalidate(); // Esto es para refrescar las imagenes
-			
-		}
-		
-	}
 	
 	
-	private String obtenerDescripcionItem(Item item) {
+	private String obtenerDescripcionItem(PaqueteItem item) {
 		
 		String descripcion = "<html>";
 		

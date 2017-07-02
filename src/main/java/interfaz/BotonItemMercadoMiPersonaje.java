@@ -12,19 +12,18 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
-import com.google.gson.Gson;
-
 import dominio.Item;
 import juego.Juego;
-import mensajeria.Comando;
+import mensajeria.ComandoActualizarPersonajeServidor;
 import mensajeria.ComandoActualizarPersonaje;
+import mensajeria.PaqueteItem;
 import mensajeria.PaquetePersonaje;
 
 public class BotonItemMercadoMiPersonaje extends JButton {
 	
 	private Juego juego;
 	private JFrame ventanaMercado;
-	private Item item;
+	private PaqueteItem item;
 
 	public BotonItemMercadoMiPersonaje(Juego juego, JFrame ventanaMercado) {
 		super();
@@ -55,21 +54,19 @@ public class BotonItemMercadoMiPersonaje extends JButton {
 				if (opcionSeleccionada == JOptionPane.YES_OPTION) {
 						
 					boton.setEnabled(false);
-					item.setOfertado(true);					
+					item.setEstaOfertado(true);					
 					
-					// Obtengo Mi Personaje
-					PaquetePersonaje paquetePersonaje = juego.getPersonaje();
-					
-					// Envio el comando para indicarle al servidor que actualice mi personaje en los demas clientes
+					// Envio el comando para indicarle al servidor que actualice los items ofertados de mi personaje
 					try {
 						
-						juego.getCliente().enviarComando(new ComandoActualizarPersonaje(juego.getPersonaje()));
+						juego.getCliente().enviarComando(new ComandoActualizarPersonajeServidor(juego.getPersonaje()));
 						
 					} catch (IOException ioe) {
 						
-						ioe.printStackTrace();
+						JOptionPane.showMessageDialog(ventanaMercado, "Error al ofertar item, intentalo de nuevo.", 
+								"Error al ofertar", JOptionPane.ERROR_MESSAGE);
 					}
-					
+						
 				}
 			}
 		
@@ -87,7 +84,7 @@ public class BotonItemMercadoMiPersonaje extends JButton {
 				if (opcionSeleccionada == JOptionPane.YES_OPTION) {
 						
 					boton.setEnabled(true);
-					item.setOfertado(false);
+					item.setEstaOfertado(false);
 										
 					// Obtengo Mi Personaje
 					PaquetePersonaje paquetePersonaje = juego.getPersonaje();
@@ -120,11 +117,11 @@ public class BotonItemMercadoMiPersonaje extends JButton {
 		});
 	}
 
-	public Item getItem() {
+	public PaqueteItem getItem() {
 		return item;
 	}
 
-	public void setItem(Item item) {
+	public void setItem(PaqueteItem item) {
 		this.item = item;
 	}
 	

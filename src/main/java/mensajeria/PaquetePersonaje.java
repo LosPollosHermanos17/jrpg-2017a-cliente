@@ -23,6 +23,8 @@ public class PaquetePersonaje implements Serializable, Cloneable {
 	private PaqueteInventario inventario;
 	private PaqueteMochila mochila;
 	private int cantItemsOfertados;
+	
+	private boolean seEncuentraEnMercado;
 
 	public PaquetePersonaje() {
 		estado = Estado.estadoOffline;
@@ -193,4 +195,13 @@ public class PaquetePersonaje implements Serializable, Cloneable {
 		}
 		return obj;
 	}
+
+	public boolean getSeEncuentraEnMercado() {
+		return seEncuentraEnMercado;
+	}
+
+	public void setSeEncuentraEnMercado(boolean seEncuentraEnMercado) {
+		this.seEncuentraEnMercado = seEncuentraEnMercado;
+	}
+	
 }
