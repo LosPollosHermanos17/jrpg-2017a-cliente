@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import entidades.Entidad;
 import frames.MenuMercado;
 import interfaz.EstadoDePersonaje;
+import interfaz.MenuChat;
 import interfaz.MenuInfoPersonaje;
 import interfaz.MenuInventario;
 import juego.Juego;
@@ -37,6 +38,7 @@ public class EstadoJuego extends Estado {
 	private int tipoSolicitud;
 	private BufferedImage miniaturaPersonaje;
 	private MenuInventario menuInventario;
+	private MenuChat menuChat;
 	private MenuMercado menuMercado;
 	private int[] posMouse;
 
@@ -50,6 +52,7 @@ public class EstadoJuego extends Estado {
 				Recursos.personaje.get(juego.getPersonaje().getRaza()), 150);
 		miniaturaPersonaje = Recursos.personaje.get(paquetePersonaje.getRaza()).get(5)[0];
 		menuInventario = new MenuInventario(juego);
+		menuChat = new MenuChat(juego);
 		menuMercado = new MenuMercado(juego);
 
 		try {
@@ -106,6 +109,7 @@ public class EstadoJuego extends Estado {
 		entidadPersonaje.graficarNombre(g);
 		EstadoDePersonaje.dibujarEstadoDePersonaje(g, 5, 5, paquetePersonaje, miniaturaPersonaje);
 		menuInventario.graficarBoton(g);
+		menuChat.graficarBoton(g);
 		if (haySolicitud)
 			menuEnemigo.graficar(g, tipoSolicitud);
 

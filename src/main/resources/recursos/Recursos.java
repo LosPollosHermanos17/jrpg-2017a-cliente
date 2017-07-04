@@ -1,5 +1,6 @@
 package recursos;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -82,6 +83,7 @@ public class Recursos {
 	public static Map<String, BufferedImage> habilidades = new HashMap<String, BufferedImage>();
 	public static Map<String, BufferedImage> items = new HashMap<String, BufferedImage>();
 	// Fin Batalla
+	public static Image botonChat;
 	
 
 	// Se cargan todos los recursos del juego una sola vez al inicio
@@ -336,6 +338,9 @@ public class Recursos {
 		nievePiso1 = CargadorImagen.cargarImagen("/nieve piso.png");
 		actualizarBarraDeCarga(++elementosCargados, menuCarga);
 		iceBlock = CargadorImagen.cargarImagen("/nieve cubo.png");
+		
+		//Chat
+		botonChat = CargadorImagen.cargarImagen("/BotonChat.png");
 		
 		//Inventario
 		botonInventario = CargadorImagen.cargarImagen("/BotonInventario.png");

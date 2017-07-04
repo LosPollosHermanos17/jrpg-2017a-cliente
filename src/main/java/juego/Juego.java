@@ -6,6 +6,8 @@ import java.awt.image.BufferStrategy;
 
 import javax.swing.JOptionPane;
 
+import chat.client.UIChat;
+import chat.client.UIClients;
 import cliente.Cliente;
 import cliente.EscuchaMensajes;
 import dominio.Personaje;
@@ -26,6 +28,8 @@ public class Juego implements Runnable {
 	private Thread hilo;
 	private boolean corriendo;
 
+	private UIClients interfazChat;
+	
 	private BufferStrategy bs; // Estrategia para graficar mediante buffers (Primero se "grafica" en el/los buffer/s y finalmente en el canvas)
 	private Graphics g;
 
@@ -47,12 +51,13 @@ public class Juego implements Runnable {
 	
 	private CargarRecursos cargarRecursos;
 
-	public Juego(final String nombre, final int ancho, final int alto, Cliente cliente, PaquetePersonaje pp) {
+	public Juego(final String nombre, final int ancho, final int alto, Cliente cliente, PaquetePersonaje pp, UIChat interfazChat) {
 		this.NOMBRE = nombre;
 		this.ALTO = alto;
 		this.ANCHO = ancho;
 		this.cliente = cliente;
 		this.paquetePersonaje = pp;
+		this.interfazChat = interfazChat;
 		
 		// Inicializo la ubicacion del personaje 
 		ubicacionPersonaje = new PaqueteMovimiento();
@@ -226,6 +231,12 @@ public class Juego implements Runnable {
 	public Pantalla getPantalla() {
 		return pantalla;
 	}
+
+	public UIClients getInterfazChat() {
+		return interfazChat;
+	}
+
+	
 	
 	
 }
