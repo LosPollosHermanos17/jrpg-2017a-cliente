@@ -12,12 +12,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
-import dominio.Item;
 import juego.Juego;
-import mensajeria.ComandoActualizarPersonajeServidor;
-import mensajeria.ComandoActualizarPersonaje;
+import mensajeria.ComandoDesofertarItem;
+import mensajeria.ComandoOfertarItem;
 import mensajeria.PaqueteItem;
-import mensajeria.PaquetePersonaje;
 
 public class BotonItemMercadoMiPersonaje extends JButton {
 	
@@ -54,12 +52,11 @@ public class BotonItemMercadoMiPersonaje extends JButton {
 				if (opcionSeleccionada == JOptionPane.YES_OPTION) {
 						
 					boton.setEnabled(false);
-					item.setEstaOfertado(true);					
 					
-					// Envio el comando para indicarle al servidor que actualice los items ofertados de mi personaje
+					// Le digo al servidor que cambie el estado del item
 					try {
 						
-						juego.getCliente().enviarComando(new ComandoActualizarPersonajeServidor(juego.getPersonaje()));
+						juego.getCliente().enviarComando(new ComandoOfertarItem(juego.getPersonaje().getId(), item.getId()));
 						
 					} catch (IOException ioe) {
 						
@@ -84,20 +81,19 @@ public class BotonItemMercadoMiPersonaje extends JButton {
 				if (opcionSeleccionada == JOptionPane.YES_OPTION) {
 						
 					boton.setEnabled(true);
-					item.setEstaOfertado(false);
-										
-					// Obtengo Mi Personaje
-					PaquetePersonaje paquetePersonaje = juego.getPersonaje();
-										
-					// Envio el comando para indicarle al servidor que actualice mi personaje en los demas clientes
+					
+					// Le digo al servidor que cambie el estado del item
 					try {
 						
-						juego.getCliente().enviarComando(new ComandoActualizarPersonaje(juego.getPersonaje()));
+						juego.getCliente().enviarComando(new ComandoDesofertarItem(juego.getPersonaje().getId(), item.getId()));
 						
 					} catch (IOException ioe) {
 						
-						ioe.printStackTrace();
+						JOptionPane.showMessageDialog(ventanaMercado, "Error al desofertar item, intentalo de nuevo.", 
+								"Error al desofertar", JOptionPane.ERROR_MESSAGE);
 					}
+										
+
 				}
 			}
 		
