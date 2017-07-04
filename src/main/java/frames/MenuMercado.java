@@ -33,9 +33,9 @@ import javax.swing.event.ListSelectionListener;
 import interfaz.BotonItemMercadoMiPersonaje;
 import interfaz.BotonItemMercadoOtroPersonaje;
 import juego.Juego;
-import mensajeria.ComandoActualizarPersonaje;
+import mensajeria.ComandoConsultarItemsOfertados;
 import mensajeria.ComandoIngresarMercado;
-import mensajeria.ComandoObtenerPersonajeActualizado;
+import mensajeria.ComandoSalirMercado;
 import mensajeria.PaqueteItem;
 import mensajeria.PaquetePersonaje;
 import recursos.Recursos;
@@ -113,52 +113,19 @@ public class MenuMercado {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				
-				PaquetePersonaje personajeSeleccionado = listaUsuarios.getSelectedValue();
+				PaquetePersonaje personajeSeleccionado = listaUsuarios.getSelectedValue();				
 								
 				// Solo realizo los siguientes pasos si la opcion seleccionada corresponde a un Personaje
 				if (personajeSeleccionado != null) {
 					
 					try {
 						
-						juego.getCliente().enviarComando(new ComandoObtenerPersonajeActualizado(personajeSeleccionado));
+						juego.getCliente().enviarComando(new ComandoConsultarItemsOfertados(personajeSeleccionado.getId()));						
 						
 					} catch (IOException e1) {
 						
 						e1.printStackTrace();
 					}
-					
-					Map<Integer, PaqueteItem> itemsPersonaje = personajeSeleccionado.getPaqueteInventario().getItems();
-					int cantItemsEnGrillaOtroPersonaje = 0;
-					
-					// Saco de la grilla de Otro Personaje los items y los tooltip del otro jugador
-					for (JButton slotItem : slotsItemsOtroPersonaje) {			
-						slotItem.setIcon(null);
-						slotItem.setToolTipText(null);
-					}
-						
-					// Muestro los items del jugador seleccionado en la grilla
-					for (Entry<Integer, PaqueteItem> entry : itemsPersonaje.entrySet()) {
-						
-						PaqueteItem item = entry.getValue();
-						
-						if (item != null && item.getId() > 0) {
-							
-							// Si el item esta ofertado...
-							if (item.getEstaOfertado() == true) {
-								
-								String descripcion = obtenerDescripcionItem(item);
-								slotsItemsOtroPersonaje.get(cantItemsEnGrillaOtroPersonaje).setItem(item);
-								slotsItemsOtroPersonaje.get(cantItemsEnGrillaOtroPersonaje).setIcon(new ImageIcon(Recursos.items.get(item.getNombre())));
-								slotsItemsOtroPersonaje.get(cantItemsEnGrillaOtroPersonaje).setToolTipText(descripcion);
-								cantItemsEnGrillaOtroPersonaje++;
-								
-							}
-							
-						}
-						
-					}
-				
-					ventanaMercado.revalidate(); // Esto es para refrescar las imagenes
 					
 				}
 				
@@ -214,7 +181,7 @@ public class MenuMercado {
 		//// Panel de Items Mi Personaje
 		
 		tituloPanelItemsMiPersonaje = new JLabel("Mis Items");
-		tituloPanelItemsMiPersonaje.setFont(new Font("Arial Black", Font.BOLD, 24));
+		tituloPanelItemsMiPersonaje.setFont(new Font("Rockwell Extra Bold", Font.BOLD, 24));
 		tituloPanelItemsMiPersonaje.setBorder(border);
 		tituloPanelItemsMiPersonaje.setPreferredSize(new Dimension(PANEL_ITEMS_ANCHO, 50));
 		tituloPanelItemsMiPersonaje.setHorizontalAlignment(JLabel.CENTER);
@@ -258,7 +225,7 @@ public class MenuMercado {
 
 		ventanaMercado = new JFrame("WOME - Mercado de Intercambios");
 		ventanaMercado.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		ventanaMercado.setPreferredSize(new Dimension(VENTANA_ANCHO, VENTANA_ALTO));
+		ventanaMercado.setSize(new Dimension(VENTANA_ANCHO, VENTANA_ALTO));
 		ventanaMercado.setResizable(false);
 		
 		ventanaMercado.addWindowListener(new WindowAdapter() {
@@ -272,15 +239,12 @@ public class MenuMercado {
 					ventanaMercado.setVisible(false); // oculto la ventana del mercado
 					juego.getPantalla().getFrame().setVisible(true); // vuelvo a mostrar la ventana principal del juego
 					
-					// Indico que mi personaje ya no se encuentra en el mercado
-					PaquetePersonaje personaje = juego.getPersonaje();
-					personaje.setComerciando(false);
-					
-					// Envío a actualizar al servidor
+					// Envío comando al servidor
 					try {
-						juego.getCliente().enviarComando(new ComandoActualizarPersonaje(personaje));
+						juego.getCliente().enviarComando(new ComandoSalirMercado(juego.getPersonaje().getId()));
 					} catch (IOException ioe) {
-						ioe.printStackTrace();
+						JOptionPane.showMessageDialog(ventanaMercado, "Error al salir del mercado, intentalo de nuevo.", 
+						"Error al salir", JOptionPane.ERROR_MESSAGE);
 					}
 					
 				}
@@ -300,26 +264,30 @@ public class MenuMercado {
 		// saco de la lista los nombres de los personajes que hayan quedado de antes
 		((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).clear();
 		
-		// saco de la grilla de Otro Personaje los items y los tooltips que hayan quedado de antes
-		for (JButton slotItem : slotsItemsOtroPersonaje) {			
+		// Inicializo grillaItemsOtroPersonaje
+		for (BotonItemMercadoOtroPersonaje slotItem : slotsItemsOtroPersonaje) {
+			slotItem.setItem(null);
 			slotItem.setIcon(null);
-			slotItem.setToolTipText(null);
+			slotItem.setToolTipText(null);			
 		}
 		
-		// saco de la grilla de Mi Personaje los items y los tooltips que hayan quedado de antes
-		for (JButton slotItem : slotsItemsMiPersonaje) {			
+		// Inicializo grillaItemsMiPersonaje
+		for (BotonItemMercadoMiPersonaje slotItem : slotsItemsMiPersonaje) {			
+			slotItem.setItem(null);
 			slotItem.setIcon(null);
 			slotItem.setToolTipText(null);
+			slotItem.setEnabled(true);
 		}
 		
 		juego.getPantalla().getFrame().setVisible(false); // oculto la ventana principal del juego
 		ventanaMercado.setVisible(true); // muestro la ventana correspondiente al mercado
 		
-		// Envío comando indicando que ingrese al mercado
+		// envío comando indicando que ingrese al mercado
 		try {
 			this.juego.getCliente().enviarComando(new ComandoIngresarMercado(juego.getPersonaje().getId()));
 		} catch (IOException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(ventanaMercado, "Error al ingresar al mercado, intentalo de nuevo.", 
+			"Error al ingresar", JOptionPane.ERROR_MESSAGE);
 		}
 		
 		// muestro mis items
@@ -373,19 +341,86 @@ public class MenuMercado {
 		
 	}
 	
-	public void añadirPersonaje(PaquetePersonaje personaje)
+	public void agregarPersonaje(PaquetePersonaje personaje)
 	{
 		// Si estoy mostrando la vista de mercado
-		if(this.ventanaMercado.isVisible())		
-			// quito el personaje
+		if (this.ventanaMercado.isVisible())		
+			
+			// Agrego el personaje
 			((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).addElement(personaje);	
 	}
 	
 	public void quitarPersonaje(PaquetePersonaje personaje)
 	{
-		// Si estoy mostrando la vista de mercado
-		if(this.ventanaMercado.isVisible())
-			// quito el personaje
-			((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).removeElement(personaje);	
+		// Si estoy mostrando la vista de mercado...
+		if (this.ventanaMercado.isVisible()) {			
+						
+			PaquetePersonaje personajeSeleccionado = listaUsuarios.getSelectedValue();
+			
+			// Si ademas tambien era el que tenia seleccionado...
+			if (personajeSeleccionado != null && personajeSeleccionado.getId() == personaje.getId() ) {
+				
+				// Saco de la grilla los items y los tooltips
+				for (BotonItemMercadoOtroPersonaje slotItem : slotsItemsOtroPersonaje) {
+					slotItem.setItem(null);
+					slotItem.setIcon(null);
+					slotItem.setToolTipText(null);
+				}
+				
+				ventanaMercado.revalidate(); // Esto es para refrescar las imagenes
+			
+			}
+			
+			// Quito el personaje de la lista
+			((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).removeElement(personaje);
+		}
 	}
+	
+	
+	public void mostrarItemsOfertados(PaquetePersonaje personaje) {
+		
+		// Si el personaje que recibi como parametro es efectivamente el que seleccione
+		// o el que tengo seleccionado...
+		PaquetePersonaje personajeSeleccionado = listaUsuarios.getSelectedValue();
+		
+		if (ventanaMercado.isVisible() && personajeSeleccionado != null && personajeSeleccionado.getId() == personaje.getId()) {
+		
+			Map<Integer, PaqueteItem> itemsPersonaje = personaje.getPaqueteInventario().getItems();
+			int cantItemsEnGrillaOtroPersonaje = 0;
+			
+			// Saco de la grilla de Otro Personaje los items y los tooltip del otro jugador
+			for (BotonItemMercadoOtroPersonaje slotItem : slotsItemsOtroPersonaje) {			
+				slotItem.setItem(null);
+				slotItem.setIcon(null);
+				slotItem.setToolTipText(null);
+			}
+				
+			// Muestro los items del jugador seleccionado en la grilla
+			for (Entry<Integer, PaqueteItem> entry : itemsPersonaje.entrySet()) {
+				
+				PaqueteItem item = entry.getValue();
+				
+				if (item != null && item.getId() > 0) {
+					
+					// Si el item esta ofertado...
+					if (item.getOfertado() == true) {
+						
+						String descripcion = obtenerDescripcionItem(item);
+						slotsItemsOtroPersonaje.get(cantItemsEnGrillaOtroPersonaje).setItem(item);
+						slotsItemsOtroPersonaje.get(cantItemsEnGrillaOtroPersonaje).setIcon(new ImageIcon(Recursos.items.get(item.getNombre())));
+						slotsItemsOtroPersonaje.get(cantItemsEnGrillaOtroPersonaje).setToolTipText(descripcion);
+						cantItemsEnGrillaOtroPersonaje++;
+						
+					}
+					
+				}
+				
+			}
+		
+			ventanaMercado.revalidate(); // Esto es para refrescar las imagenes		
+			
+		}
+		
+	}
+	
 }
