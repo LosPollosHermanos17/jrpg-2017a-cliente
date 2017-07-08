@@ -186,9 +186,6 @@ public class MenuMercado {
 					JOptionPane.showMessageDialog(ventanaMercado, "Error al confirmar intercambio de item, intentalo de nuevo.", 
 							"Error al confirmar intercambio", JOptionPane.ERROR_MESSAGE);
 				}
-				
-				encabezadoPanelItemsOtroPersonaje.remove(botonPanelItemsOtroPersonaje);
-				ventanaMercado.revalidate();
 						
 			}
 		});
@@ -293,11 +290,6 @@ public class MenuMercado {
 	
 	public void mostrar(Juego juego) {
 		
-		Map<Integer, PaquetePersonaje> personajesConectados;
-		
-		// Desbloqueo la lista por si es que se encontraba bloqueada
-		listaUsuarios.setEnabled(true);
-		
 		// Saco de la lista los nombres de los personajes que hayan quedado de antes
 		((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).clear();
 		
@@ -379,12 +371,17 @@ public class MenuMercado {
 	}
 	
 	public void agregarPersonaje(PaquetePersonaje personaje)
-	{
-		// Si estoy mostrando la vista de mercado y el personaje no esta intercambiando...
-		if (this.ventanaMercado.isVisible() && personaje.getIntercambiando() == false)		
+	{		
+		// Si estoy mostrando la vista de mercado...
+		if (this.ventanaMercado.isVisible()) {		
 			
-			// Agrego el personaje
-			((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).addElement(personaje);	
+			// Si el personaje no se encuentra aun en la lista...			
+			if (((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).contains(personaje) == false)
+			
+				// Agrego el personaje
+				((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).addElement(personaje);
+			
+		}
 	}
 	
 	public void quitarPersonaje(PaquetePersonaje personaje)
@@ -487,7 +484,7 @@ public class MenuMercado {
 			
 		}			
 		
-		JOptionPane.showMessageDialog(ventanaMercado, "<html><i>" + personajeSolicitante.getNombre() + "</i> desea intercambiar un item suyo por tu item:\n<html><i>" + nombreItem + "</i>" +
+		JOptionPane.showMessageDialog(ventanaMercado, "<html><i>" + personajeSolicitante.getNombre() + "</i> desea intercambiar tu item: <html><i>" + nombreItem + "</i>" +
 				"\nElije por cual de sus items lo quieres intercambiar o pulsa en el boton Cancelar si no te interesa ninguno.",
 				"Solicitud de Intercambio", JOptionPane.INFORMATION_MESSAGE);
 		
@@ -511,5 +508,84 @@ public class MenuMercado {
 		ventanaMercado.revalidate();
 		
 	}
+
+	public JList<PaquetePersonaje> getListaUsuarios() {
+		return listaUsuarios;
+	}
+	
+	
+
+	public JFrame getVentanaMercado() {
+		return ventanaMercado;
+	}
+
+	public void quitarBotonCancelar() {
+		
+		encabezadoPanelItemsOtroPersonaje.remove(botonPanelItemsOtroPersonaje);
+		ventanaMercado.revalidate();
+		
+	}
+	
+	public void restaurarMenuMercado() {
+		
+		// Saco de la lista los nombres de los personajes que hayan quedado de antes
+		((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).clear();
+		
+		// Inicializo grillaItemsOtroPersonaje
+		for (BotonItemMercadoOtroPersonaje slotItem : slotsItemsOtroPersonaje) {
+			slotItem.setItem(null);
+			slotItem.setIcon(null);
+			slotItem.setToolTipText(null);			
+		}
+		
+		// Inicializo grillaItemsMiPersonaje
+		for (BotonItemMercadoMiPersonaje slotItem : slotsItemsMiPersonaje) {			
+			slotItem.setItem(null);
+			slotItem.setIcon(null);
+			slotItem.setToolTipText(null);
+			slotItem.setEnabled(true);
+		}
+		
+		
+		// muestro mis items
+		Map<Integer, PaqueteItem> itemsMiPersonaje = juego.getPersonaje().getPaqueteInventario().getItems();
+		int cantItemsEnGrillaMiPersonaje = 0;
+		
+		for (Entry<Integer, PaqueteItem> entry : itemsMiPersonaje.entrySet()) {
+			
+			PaqueteItem item = entry.getValue();
+			
+			if (item != null && item.getId() > 0) {
+
+				String descripcion = obtenerDescripcionItem(item);
+				slotsItemsMiPersonaje.get(cantItemsEnGrillaMiPersonaje).setItem(item);
+				slotsItemsMiPersonaje.get(cantItemsEnGrillaMiPersonaje).setIcon(new ImageIcon(Recursos.items.get(item.getNombre())));
+				slotsItemsMiPersonaje.get(cantItemsEnGrillaMiPersonaje).setToolTipText(descripcion);
+				
+				// Si el item esta ofertado...
+				if (item.getOfertado() == true)
+					slotsItemsMiPersonaje.get(cantItemsEnGrillaMiPersonaje).setEnabled(false);
+				
+				cantItemsEnGrillaMiPersonaje++;
+				
+			}
+			
+		}
+		
+		// Obtengo todos los personajes que ya se encuentran en el mercado y los agrego a la lista
+		Map<Integer, PaquetePersonaje> personajesConectados = juego.getEscuchaMensajes().getPersonajesConectados();
+		
+		for (Entry<Integer, PaquetePersonaje> entry : personajesConectados.entrySet()) {
+			
+			// Si no es el mismo y ademas se encuentra en estado comerciando, entonces se lo agrego
+			if (entry.getValue().getId() != juego.getPersonaje().getId() && entry.getValue().getComerciando() == true && entry.getValue().getIntercambiando() == false)
+				juego.getEstadoJuego().getMenuMercado().agregarPersonaje(entry.getValue());
+		}
+		
+		ventanaMercado.revalidate();				
+		
+	}
+	
+	
 	
 }
