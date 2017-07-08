@@ -448,7 +448,7 @@ public class MenuMercado {
 				&& personajeSeleccionado.getId() == personaje.getId()) {
 
 			// Lo actualizo localmente
-			juego.getEscuchaMensajes().getPersonajesConectados().replace(personaje.getId(), personaje);
+			juego.getEscuchaMensajes().getPersonajesConectados().put(personaje.getId(), personaje);
 
 			Map<Integer, PaqueteItem> itemsPersonaje = personaje.getPaqueteInventario().getItems();
 			int cantItemsEnGrillaOtroPersonaje = 0;
