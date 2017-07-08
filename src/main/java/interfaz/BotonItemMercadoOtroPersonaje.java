@@ -99,7 +99,7 @@ public class BotonItemMercadoOtroPersonaje extends JButton {
 						}
 					} else {
 						
-						JOptionPane.showMessageDialog(ventanaMercado, "Debes ofertar por lo menos un item compatible con el que deseas.", 
+						JOptionPane.showMessageDialog(ventanaMercado, "Debes ofertar por lo menos un item de el mismo tipo que el que deseas.", 
 								"Aviso", JOptionPane.WARNING_MESSAGE);
 					}
 					
@@ -146,7 +146,7 @@ public class BotonItemMercadoOtroPersonaje extends JButton {
 						
 					} else {
 						
-						JOptionPane.showMessageDialog(ventanaMercado, "Debes seleccionar uno que sea del mismo tipo que el item <html><i>" + itemPersonajeSolicitado + "</i></html>.", 
+						JOptionPane.showMessageDialog(ventanaMercado, "<html>Debes seleccionar uno que sea del mismo tipo que el item <i>" + itemPersonajeSolicitado.getNombre() + "</i>.</html>", 
 								"Aviso", JOptionPane.WARNING_MESSAGE);													
 					}
 					
