@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -53,6 +55,14 @@ public class BotonItemMercadoMiPersonaje extends JButton {
 						
 					boton.setEnabled(false);
 					
+					// Cambio el estado del item localmente					
+					Map<Integer, PaqueteItem> misItems = juego.getPersonaje().getPaqueteInventario().getItems();					
+					for (Entry<Integer, PaqueteItem> entry : misItems.entrySet()) {
+						
+						if (entry.getValue().getId() == item.getId())
+							entry.getValue().setOfertado(true);
+					}
+					
 					// Le digo al servidor que cambie el estado del item
 					try {
 						
@@ -81,6 +91,14 @@ public class BotonItemMercadoMiPersonaje extends JButton {
 				if (opcionSeleccionada == JOptionPane.YES_OPTION) {
 						
 					boton.setEnabled(true);
+					
+					// Cambio el estado del item localmente
+					Map<Integer, PaqueteItem> misItems = juego.getPersonaje().getPaqueteInventario().getItems();					
+					for (Entry<Integer, PaqueteItem> entry : misItems.entrySet()) {
+						
+						if (entry.getValue().getId() == item.getId())
+							entry.getValue().setOfertado(false);
+					}
 					
 					// Le digo al servidor que cambie el estado del item
 					try {

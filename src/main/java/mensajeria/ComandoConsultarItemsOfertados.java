@@ -18,8 +18,11 @@ public class ComandoConsultarItemsOfertados extends Comando implements Serializa
 		EscuchaMensajes escuchaMensaje = (EscuchaMensajes) argumento;
 		
 		// En esta instancia, el servidor me devolvio en la variable personajeSeleccionado los
-		// datos justamente del personaje seleccionado, ahora tengo que llamar al metodo
-		// correspondiente de la clase MenuMercado para mostrar los items ofertados en la grilla
+		// datos justamente del personaje seleccionado, ahora tengo que actualizar ese personaje
+		// localmente y llamar al metodo correspondiente de la clase MenuMercado para mostrar los 
+		// items ofertados en la grilla
+		
+		escuchaMensaje.getPersonajesConectados().replace(personajeActualizado.getId(), personajeActualizado);
 		
 		escuchaMensaje.getJuego().getEstadoJuego().getMenuMercado().mostrarItemsOfertados(personajeActualizado);
 		

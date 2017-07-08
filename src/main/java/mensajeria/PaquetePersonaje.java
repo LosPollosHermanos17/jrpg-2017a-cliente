@@ -25,6 +25,7 @@ public class PaquetePersonaje implements Serializable, Cloneable {
 	private int cantItemsOfertados;
 	
 	private boolean comerciando;
+	private boolean intercambiando;
 
 	public PaquetePersonaje() {
 		estado = Estado.estadoOffline;
@@ -203,5 +204,15 @@ public class PaquetePersonaje implements Serializable, Cloneable {
 	public void setComerciando(boolean comerciando) {
 		this.comerciando = comerciando;
 	}
+
+	public boolean getIntercambiando() {
+		return intercambiando;
+	}
+
+	public void setIntercambiando(boolean intercambiando) {
+		this.intercambiando = intercambiando;
+	}
+	
+	
 	
 }

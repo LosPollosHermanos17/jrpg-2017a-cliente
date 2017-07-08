@@ -38,7 +38,7 @@ public class ComandoIngresarMercado extends Comando implements Serializable {
 			for (Entry<Integer, PaquetePersonaje> entry : personajesConectados.entrySet()) {
 				
 				// Si no es el mismo y ademas se encuentra en estado comerciando, entonces se lo agrego
-				if (entry.getValue().getId() != idPersonaje && entry.getValue().getComerciando() == true)
+				if (entry.getValue().getId() != idPersonaje && entry.getValue().getComerciando() == true && entry.getValue().getIntercambiando() == false)
 					escuchaMensaje.getJuego().getEstadoJuego().getMenuMercado().agregarPersonaje(entry.getValue());
 			}
 			

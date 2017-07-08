@@ -51,13 +51,12 @@ public class Juego implements Runnable {
 	
 	private CargarRecursos cargarRecursos;
 
-	public Juego(final String nombre, final int ancho, final int alto, Cliente cliente, PaquetePersonaje pp, UIChat interfazChat) {
+	public Juego(final String nombre, final int ancho, final int alto, Cliente cliente, PaquetePersonaje pp) {
 		this.NOMBRE = nombre;
 		this.ALTO = alto;
 		this.ANCHO = ancho;
 		this.cliente = cliente;
 		this.paquetePersonaje = pp;
-		this.interfazChat = interfazChat;
 		
 		// Inicializo la ubicacion del personaje 
 		ubicacionPersonaje = new PaqueteMovimiento();
