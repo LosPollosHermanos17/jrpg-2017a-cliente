@@ -22,8 +22,6 @@ public class ComandoDesofertarItem extends Comando implements Serializable {
 		// Tengo que ver si casualmente yo tengo al usuario que actualizo el estado del item seleccionado
 		
 		// El metodo se encargara de corroborar si justo esta seleccionado el ofertante
-		escuchaMensaje.getJuego().getEstadoJuego().getMenuMercado().mostrarItemsOfertados(personajeActualizado);			
-		
+		escuchaMensaje.getJuego().getEstadoJuego().getMenuMercado().mostrarItemsOfertados(personajeActualizado);
 	}
-
 }
