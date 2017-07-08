@@ -92,7 +92,7 @@ public class MenuMercado {
 	private ArrayList<BotonItemMercadoMiPersonaje> slotsItemsMiPersonaje;
 	private JScrollPane scrollPanelItemsMiPersonaje;
 
-	public MenuMercado(Juego juego) {
+	public MenuMercado(final Juego juego) {
 
 		this.juego = juego;
 
@@ -301,7 +301,7 @@ public class MenuMercado {
 		ventanaMercado.setLocationRelativeTo(null);
 	}
 
-	public void mostrar(Juego juego) {
+	public void mostrar(final Juego juego) {
 
 		// Saco de la lista los nombres de los personajes que hayan quedado de
 		// antes
