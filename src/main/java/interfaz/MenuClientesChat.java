@@ -170,9 +170,7 @@ public class MenuClientesChat extends JFrame {
 	 * Abre una ventana publica de chat
 	 */
 	private void abrirVentanaChatPrivada() {
-		if (this.chatPublico == null)
-			this.chatPublico = new MenuVentanaChat("Sala", this, false);
-		this.chatPublico.setVisible(true);
+		this.chatPublico = new MenuVentanaChat("Sala", this, false);
 	}
 
 	/*
@@ -232,7 +230,8 @@ public class MenuClientesChat extends JFrame {
 			MenuVentanaChat uiChat = chatPrivados.get(usuario);
 			chatPrivados.remove(usuario);
 			uiChat.dispose();
-		}
+		} else if (usuario.equals("Sala"))
+			chatPublico.dispose();
 	}
 
 	/*

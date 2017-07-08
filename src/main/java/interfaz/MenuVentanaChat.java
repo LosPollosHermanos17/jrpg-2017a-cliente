@@ -103,7 +103,7 @@ public class MenuVentanaChat extends JDialog {
 				"Confirmación", JOptionPane.YES_NO_OPTION);
 		if (opcion == JOptionPane.YES_OPTION)
 		{
-			this.uiClients.eliminarVentanChat(this.username);			
+			this.uiClients.eliminarVentanChat(this.username);
 		}
 	}
 
