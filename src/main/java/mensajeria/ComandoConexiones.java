@@ -19,6 +19,8 @@ public class ComandoConexiones extends Comando implements Serializable, Cloneabl
 
 	@Override
 	public void resolver(Object argumento) {
-		((EscuchaMensajes) argumento).setPersonajesConectados(this.getPersonajes());
+		EscuchaMensajes escuchaMensajes = ((EscuchaMensajes) argumento);
+		escuchaMensajes.setPersonajesConectados(this.getPersonajes());
+		escuchaMensajes.getJuego().getMenuClientesChat().actualizarUsuarios(this.getPersonajes());
 	}
 }

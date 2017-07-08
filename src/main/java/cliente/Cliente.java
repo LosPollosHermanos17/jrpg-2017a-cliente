@@ -14,6 +14,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 import frames.*;
+import interfaz.MenuClientesChat;
 import juego.Juego;
 import mensajeria.AdaptadorComando;
 import mensajeria.Comando;
@@ -121,7 +122,7 @@ public class Cliente extends Thread {
 				wome.start();
 
 				// Finalizo el menu de carga
-				menuCarga.dispose();
+				menuCarga.dispose();		
 
 			} catch (IOException | InterruptedException | ClassNotFoundException e) {
 				JOptionPane.showMessageDialog(null, "Fallo la conexi�n con el servidor durante el inicio de sesi�n.");

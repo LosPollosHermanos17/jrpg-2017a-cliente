@@ -1,4 +1,4 @@
-package chat.client;
+package interfaz;
 
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -23,7 +23,7 @@ import java.net.UnknownHostException;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class UIChat extends JDialog {
+public class MenuVentanaChat extends JDialog {
 
 
 	private JTextField txtMessage;
@@ -31,10 +31,10 @@ public class UIChat extends JDialog {
 	private JButton btnSend;
 
 	private String username;
-	private UIClients uiClients;
+	private MenuClientesChat uiClients;
 	private boolean isPrivate;
 
-	public UIChat(String username, UIClients uiClients, boolean isPrivate) {
+	public MenuVentanaChat(String username, MenuClientesChat uiClients, boolean isPrivate) {
 		this.username = username;
 		this.uiClients = uiClients;
 		this.isPrivate = isPrivate;
@@ -103,7 +103,7 @@ public class UIChat extends JDialog {
 				"Confirmación", JOptionPane.YES_NO_OPTION);
 		if (opcion == JOptionPane.YES_OPTION)
 		{
-			this.uiClients.removeChat(this.username);			
+			this.uiClients.eliminarVentanChat(this.username);			
 		}
 	}
 
@@ -120,7 +120,7 @@ public class UIChat extends JDialog {
 	 */
 	private void sendMessage() {
 		try {
-			this.uiClients.sendMessage(this.username, txtMessage.getText(), this.isPrivate);
+			this.uiClients.enviarMensaje(this.username, txtMessage.getText(), this.isPrivate);
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(this, "No se pudo enviar el mensaje.", "Error con servidor",
 					JOptionPane.INFORMATION_MESSAGE);

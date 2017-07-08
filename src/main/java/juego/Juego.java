@@ -6,14 +6,14 @@ import java.awt.image.BufferStrategy;
 
 import javax.swing.JOptionPane;
 
-import chat.client.UIChat;
-import chat.client.UIClients;
 import cliente.Cliente;
 import cliente.EscuchaMensajes;
 import dominio.Personaje;
 import estados.Estado;
 import estados.EstadoBatalla;
 import estados.EstadoJuego;
+import interfaz.MenuChat;
+import interfaz.MenuClientesChat;
 import mensajeria.PaqueteMovimiento;
 import mensajeria.PaquetePersonaje;
 
@@ -28,7 +28,7 @@ public class Juego implements Runnable {
 	private Thread hilo;
 	private boolean corriendo;
 
-	private UIClients interfazChat;
+	private MenuClientesChat menuClientesChat;
 	
 	private BufferStrategy bs; // Estrategia para graficar mediante buffers (Primero se "grafica" en el/los buffer/s y finalmente en el canvas)
 	private Graphics g;
@@ -74,6 +74,8 @@ public class Juego implements Runnable {
 		
 		cargarRecursos = new CargarRecursos(cliente);
 		cargarRecursos.start();
+		
+		menuClientesChat = new MenuClientesChat(cliente);	
 	}
 
 	public void iniciar() { // Carga lo necesario para iniciar el juego
@@ -231,11 +233,7 @@ public class Juego implements Runnable {
 		return pantalla;
 	}
 
-	public UIClients getInterfazChat() {
-		return interfazChat;
+	public MenuClientesChat getMenuClientesChat() {
+		return menuClientesChat;
 	}
-
-	
-	
-	
 }

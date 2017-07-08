@@ -95,6 +95,9 @@ public class EstadoJuego extends Estado {
 
 			if (menuInventario.botonClickeado(posMouse[0], posMouse[1]))
 				menuInventario.mostrarInventario();
+			
+			if (menuChat.botonClickeado(posMouse[0], posMouse[1]))
+				menuChat.mostrarChat();
 
 			juego.getHandlerMouse().setNuevoClick(false);
 		}
