@@ -61,7 +61,7 @@ public class MenuMercado {
 	private final int CANT_FILAS_GRILLA_ITEMS = 5;
 	private final int CANT_COLUMNAS_GRILLA_ITEMS = 4;
 
-	private Juego juego;
+	private final Juego juego;
 
 	// ventana principal
 	private JFrame ventanaMercado;

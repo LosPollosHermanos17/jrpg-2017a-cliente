@@ -39,7 +39,7 @@ public class BotonItemMercadoOtroPersonaje extends JButton {
 
 	private void inicializarPopups() {
 			
-		JPopupMenu popupIntercambiar = new JPopupMenu();
+		final JPopupMenu popupIntercambiar = new JPopupMenu();
 		
 		popupIntercambiar.add(new JMenuItem(new AbstractAction("Intercambiar") {
 			
