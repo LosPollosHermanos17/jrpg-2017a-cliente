@@ -22,6 +22,8 @@ public class PaqueteItem implements Serializable, Cloneable {
 	
 	private boolean ofertado;
 	
+	private boolean intercambiar;
+	
 	public PaqueteItem() {
 	}
 	
@@ -153,6 +155,13 @@ public class PaqueteItem implements Serializable, Cloneable {
 	public void setOfertado(boolean ofertado) {
 		this.ofertado = ofertado;
 	}
-	
+
+	public boolean getIntercambiar() {
+		return intercambiar;
+	}
+
+	public void setIntercambiar(boolean intercambiar) {
+		this.intercambiar = intercambiar;
+	}	
 	
 }

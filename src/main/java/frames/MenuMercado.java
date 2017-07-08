@@ -4,8 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -33,6 +36,7 @@ import javax.swing.event.ListSelectionListener;
 import interfaz.BotonItemMercadoMiPersonaje;
 import interfaz.BotonItemMercadoOtroPersonaje;
 import juego.Juego;
+import mensajeria.ComandoConfirmarIntercambio;
 import mensajeria.ComandoConsultarItemsOfertados;
 import mensajeria.ComandoIngresarMercado;
 import mensajeria.ComandoSalirMercado;
@@ -75,7 +79,9 @@ public class MenuMercado {
 	private JSplitPane panelItems;
 	
 	private JPanel panelItemsOtroPersonaje;
+	private JPanel encabezadoPanelItemsOtroPersonaje;
 	private JLabel tituloPanelItemsOtroPersonaje;
+	private JButton botonPanelItemsOtroPersonaje;
 	private JPanel grillaItemsOtroPersonaje;	
 	private ArrayList<BotonItemMercadoOtroPersonaje> slotsItemsOtroPersonaje;
 	private JScrollPane scrollPanelItemsOtroPersonaje;
@@ -134,7 +140,7 @@ public class MenuMercado {
 		});
 		
 		tituloPanelUsuarios = new JLabel("Jugadores");
-		tituloPanelUsuarios.setFont(new Font("Rockwell Extra Bold", Font.PLAIN, 24));
+		tituloPanelUsuarios.setFont(new Font("Perpetua", Font.BOLD, 24));
 	    Border border = BorderFactory.createLineBorder(Color.BLACK);
 	    tituloPanelUsuarios.setBorder(border);	    
 	    tituloPanelUsuarios.setPreferredSize(new Dimension(PANEL_USUARIOS_ANCHO, 50));
@@ -154,24 +160,52 @@ public class MenuMercado {
 		
 		//// Panel de Items Otro Personaje
 		
+		encabezadoPanelItemsOtroPersonaje = new JPanel(new BorderLayout());	
+		
 		tituloPanelItemsOtroPersonaje = new JLabel("Items Ofertados");
-		tituloPanelItemsOtroPersonaje.setFont(new Font("Rockwell Extra Bold", Font.PLAIN, 24));
-		tituloPanelItemsOtroPersonaje.setBorder(border);
-		tituloPanelItemsOtroPersonaje.setPreferredSize(new Dimension(PANEL_ITEMS_ANCHO, 50));
+		tituloPanelItemsOtroPersonaje.setFont(new Font("Perpetua", Font.BOLD, 24));
+		tituloPanelItemsOtroPersonaje.setSize(new Dimension(PANEL_ITEMS_ANCHO, 50));
 		tituloPanelItemsOtroPersonaje.setHorizontalAlignment(JLabel.CENTER);
 		tituloPanelItemsOtroPersonaje.setVerticalAlignment(JLabel.CENTER);
+		
+		botonPanelItemsOtroPersonaje = new JButton("Cancelar");
+		botonPanelItemsOtroPersonaje.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				int idUsuarioSolicitante = listaUsuarios.getSelectedValue().getId();
+				int idUsuarioSolicitado = juego.getPersonaje().getId();	
+				
+				// Envio el comando para confirmar el intercambio (en este caso se evita lo que es la actualizacion
+				// de los items en la base de datos)
+				try {
+									
+					juego.getCliente().enviarComando(new ComandoConfirmarIntercambio(idUsuarioSolicitante, idUsuarioSolicitado, 0, 0));
+					
+				} catch (IOException ioe) {
+					
+					JOptionPane.showMessageDialog(ventanaMercado, "Error al confirmar intercambio de item, intentalo de nuevo.", 
+							"Error al confirmar intercambio", JOptionPane.ERROR_MESSAGE);
+				}
+				
+				encabezadoPanelItemsOtroPersonaje.remove(botonPanelItemsOtroPersonaje);
+				ventanaMercado.revalidate();
+						
+			}
+		});
+		
+		encabezadoPanelItemsOtroPersonaje.add(tituloPanelItemsOtroPersonaje, BorderLayout.CENTER);		
 		
 		grillaItemsOtroPersonaje = new JPanel(new GridLayout(CANT_FILAS_GRILLA_ITEMS, CANT_COLUMNAS_GRILLA_ITEMS));
 				
 		slotsItemsOtroPersonaje = new ArrayList<BotonItemMercadoOtroPersonaje>(); 		
 		for (int i = 0 ; i < CANT_FILAS_GRILLA_ITEMS * CANT_COLUMNAS_GRILLA_ITEMS ; i++) {			
-			BotonItemMercadoOtroPersonaje itemDisplay = new BotonItemMercadoOtroPersonaje(juego, ventanaMercado);
+			BotonItemMercadoOtroPersonaje itemDisplay = new BotonItemMercadoOtroPersonaje(juego, ventanaMercado, listaUsuarios);
 			slotsItemsOtroPersonaje.add(itemDisplay); 
 			grillaItemsOtroPersonaje.add(itemDisplay);			
 		}
 					
 		panelItemsOtroPersonaje = new JPanel(new BorderLayout());		
-		panelItemsOtroPersonaje.add(tituloPanelItemsOtroPersonaje, BorderLayout.NORTH);
+		panelItemsOtroPersonaje.add(encabezadoPanelItemsOtroPersonaje, BorderLayout.NORTH);
 		panelItemsOtroPersonaje.add(grillaItemsOtroPersonaje, BorderLayout.CENTER);
 		panelItemsOtroPersonaje.setPreferredSize(new Dimension(PANEL_ITEMS_ANCHO, PANEL_ITEMS_ALTO));
 		
@@ -181,7 +215,7 @@ public class MenuMercado {
 		//// Panel de Items Mi Personaje
 		
 		tituloPanelItemsMiPersonaje = new JLabel("Mis Items");
-		tituloPanelItemsMiPersonaje.setFont(new Font("Rockwell Extra Bold", Font.BOLD, 24));
+		tituloPanelItemsMiPersonaje.setFont(new Font("Perpetua", Font.BOLD, 24));
 		tituloPanelItemsMiPersonaje.setBorder(border);
 		tituloPanelItemsMiPersonaje.setPreferredSize(new Dimension(PANEL_ITEMS_ANCHO, 50));
 		tituloPanelItemsMiPersonaje.setHorizontalAlignment(JLabel.CENTER);
@@ -261,7 +295,10 @@ public class MenuMercado {
 		
 		Map<Integer, PaquetePersonaje> personajesConectados;
 		
-		// saco de la lista los nombres de los personajes que hayan quedado de antes
+		// Desbloqueo la lista por si es que se encontraba bloqueada
+		listaUsuarios.setEnabled(true);
+		
+		// Saco de la lista los nombres de los personajes que hayan quedado de antes
 		((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).clear();
 		
 		// Inicializo grillaItemsOtroPersonaje
@@ -343,8 +380,8 @@ public class MenuMercado {
 	
 	public void agregarPersonaje(PaquetePersonaje personaje)
 	{
-		// Si estoy mostrando la vista de mercado
-		if (this.ventanaMercado.isVisible())		
+		// Si estoy mostrando la vista de mercado y el personaje no esta intercambiando...
+		if (this.ventanaMercado.isVisible() && personaje.getIntercambiando() == false)		
 			
 			// Agrego el personaje
 			((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).addElement(personaje);	
@@ -373,6 +410,7 @@ public class MenuMercado {
 			
 			// Quito el personaje de la lista
 			((DefaultListModel<PaquetePersonaje>)listaUsuarios.getModel()).removeElement(personaje);
+		
 		}
 	}
 	
@@ -384,6 +422,9 @@ public class MenuMercado {
 		PaquetePersonaje personajeSeleccionado = listaUsuarios.getSelectedValue();
 		
 		if (ventanaMercado.isVisible() && personajeSeleccionado != null && personajeSeleccionado.getId() == personaje.getId()) {
+			
+			// Lo actualizo localmente
+			juego.getEscuchaMensajes().getPersonajesConectados().replace(personaje.getId(), personaje);
 		
 			Map<Integer, PaqueteItem> itemsPersonaje = personaje.getPaqueteInventario().getItems();
 			int cantItemsEnGrillaOtroPersonaje = 0;
@@ -420,6 +461,54 @@ public class MenuMercado {
 			ventanaMercado.revalidate(); // Esto es para refrescar las imagenes		
 			
 		}
+		
+	}
+	
+	
+	public void recibirSolicitudIntercambio(int idPersonajeSolicitante, int idItemSolicitado) {
+				
+		String nombreItem = null;
+		
+		Map<Integer, PaquetePersonaje> personajesConectados = juego.getEscuchaMensajes().getPersonajesConectados();
+		PaquetePersonaje personajeSolicitante = personajesConectados.get(idPersonajeSolicitante);
+		
+		// Obtengo el item que solicito el otro jugador
+		Map<Integer, PaqueteItem> misItems = juego.getPersonaje().getPaqueteInventario().getItems();
+		
+		for (Entry<Integer, PaqueteItem> entry : misItems.entrySet()) {
+			
+			PaqueteItem item = entry.getValue();
+			
+			if (item != null && item.getId() > 0 && item.getId() == idItemSolicitado ) {
+
+				nombreItem = item.getNombre();
+				
+			}
+			
+		}			
+		
+		JOptionPane.showMessageDialog(ventanaMercado, "<html><i>" + personajeSolicitante.getNombre() + "</i> desea intercambiar un item suyo por tu item:\n<html><i>" + nombreItem + "</i>" +
+				"\nElije por cual de sus items lo quieres intercambiar o pulsa en el boton Cancelar si no te interesa ninguno.",
+				"Solicitud de Intercambio", JOptionPane.INFORMATION_MESSAGE);
+		
+		// Selecciono el personaje solicitante en la lista
+		listaUsuarios.setSelectedValue(personajeSolicitante, true);
+		
+		// Bloqueo la lista
+		listaUsuarios.setEnabled(false);
+			
+		// Envio comando para consultar los items ofertados del solicitante
+		try {
+				
+			juego.getCliente().enviarComando(new ComandoConsultarItemsOfertados(personajeSolicitante.getId()));						
+				
+		} catch (IOException e1) {
+				
+			e1.printStackTrace();
+		}
+		
+		encabezadoPanelItemsOtroPersonaje.add(botonPanelItemsOtroPersonaje, BorderLayout.NORTH);
+		ventanaMercado.revalidate();
 		
 	}
 	
