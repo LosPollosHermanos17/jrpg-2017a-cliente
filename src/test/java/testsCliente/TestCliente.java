@@ -274,4 +274,9 @@ public class TestCliente {
 		}
 		t.stop();
 	}
+	
+	@Test
+	public void enviaMensajeChat(){
+		
+	}
 }

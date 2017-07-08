@@ -23,7 +23,6 @@ public class ComandoMensajeChat extends Comando implements Serializable {
 	@Override
 	public void resolver(Object argumento) {
 		EscuchaMensajes escuchaMensajes = (EscuchaMensajes) argumento;
-		escuchaMensajes.getJuego().getMenuClientesChat().recibirMensaje(this.desde, this.para, this.mensajeChat,
-				this.esPrivado);
+		escuchaMensajes.getJuego().getMenuClientesChat().recibirMensaje(this.desde, this.para, this.mensajeChat,this.esPrivado);
 	}
 }
