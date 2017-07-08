@@ -61,7 +61,7 @@ public class MenuMercado {
 	private final int CANT_FILAS_GRILLA_ITEMS = 5;
 	private final int CANT_COLUMNAS_GRILLA_ITEMS = 4;
 
-	private Juego juego;
+	private final Juego juego;
 
 	// ventana principal
 	private JFrame ventanaMercado;
@@ -92,7 +92,7 @@ public class MenuMercado {
 	private ArrayList<BotonItemMercadoMiPersonaje> slotsItemsMiPersonaje;
 	private JScrollPane scrollPanelItemsMiPersonaje;
 
-	public MenuMercado(Juego juego) {
+	public MenuMercado(final Juego juego) {
 
 		this.juego = juego;
 
@@ -301,7 +301,7 @@ public class MenuMercado {
 		ventanaMercado.setLocationRelativeTo(null);
 	}
 
-	public void mostrar(Juego juego) {
+	public void mostrar(final Juego juego) {
 
 		// Saco de la lista los nombres de los personajes que hayan quedado de
 		// antes
@@ -448,7 +448,7 @@ public class MenuMercado {
 				&& personajeSeleccionado.getId() == personaje.getId()) {
 
 			// Lo actualizo localmente
-			juego.getEscuchaMensajes().getPersonajesConectados().replace(personaje.getId(), personaje);
+			juego.getEscuchaMensajes().getPersonajesConectados().put(personaje.getId(), personaje);
 
 			Map<Integer, PaqueteItem> itemsPersonaje = personaje.getPaqueteInventario().getItems();
 			int cantItemsEnGrillaOtroPersonaje = 0;

@@ -22,7 +22,7 @@ public class ComandoConsultarItemsOfertados extends Comando implements Serializa
 		// localmente y llamar al metodo correspondiente de la clase MenuMercado para mostrar los 
 		// items ofertados en la grilla
 		
-		escuchaMensaje.getPersonajesConectados().replace(personajeActualizado.getId(), personajeActualizado);
+		escuchaMensaje.getPersonajesConectados().put(personajeActualizado.getId(), personajeActualizado);
 		
 		escuchaMensaje.getJuego().getEstadoJuego().getMenuMercado().mostrarItemsOfertados(personajeActualizado);
 		

@@ -35,9 +35,9 @@ public class BotonItemMercadoMiPersonaje extends JButton {
 
 	private void inicializarPopups() {
 		
-		JButton boton = this;		
-		JPopupMenu popupOfertar = new JPopupMenu();
-		JPopupMenu popupDesofertar = new JPopupMenu();
+		final JButton boton = this;		
+		final JPopupMenu popupOfertar = new JPopupMenu();
+		final JPopupMenu popupDesofertar = new JPopupMenu();
 		
 		popupOfertar.add(new JMenuItem(new AbstractAction("Ofertar") {
 			
